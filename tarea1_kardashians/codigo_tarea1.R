@@ -71,7 +71,6 @@ texto_afinn<-texto_df|>
   inner_join(afinn, by = "word")
 
 
-
 texto_bin<-texto_df|>
   unnest_tokens(word, text) |>
   inner_join(bin, by = "word")
@@ -80,3 +79,57 @@ texto_bin<-texto_df|>
 texto_nrc<-texto_df|>
   unnest_tokens(word, text) |>
   inner_join(nrc, by = "word")
+
+
+texto_afinn|>
+  summarise(overall_score= sum(value, na.rm=TRUE)) #es la suma, si tengo 2477 y cada valor puede girar entre -5 y +5 
+                                                  #entonces si todas las palarbas fueran lo maximo positivo posible el valor seria 12.385
+  
+texto_bin|>
+  count(sentiment, sort=TRUE)
+
+
+texto_nrc|>
+  count(sentiment, sort=TRUE)
+
+
+#Quiero hacer una tabla descriptiva con las 10 palabras mas comunes positivas y negativas usando texto_bin
+library(dplyr)
+top_palabras_bin <- texto_bin %>%
+  group_by(sentiment, word) %>%
+  summarise(frecuencia = n()) %>%
+  arrange(sentiment, desc(frecuencia)) %>%
+  slice_head(n = 10)
+top_palabras_bin
+
+#Ahora quiero hacer una tabla descriptiva con las 3 palabras mas comunes por cada emocion usando texto_nrc
+top_palabras_nrc <- texto_nrc %>%
+  group_by(sentiment, word) %>%
+  summarise(frecuencia = n()) %>%
+  arrange(sentiment, desc(frecuencia)) %>%
+  slice_head(n = 3)
+top_palabras_nrc
+
+library(ggplot2)
+#Finalmente quiero graficar los resultados de top_palabras_nrc
+ggplot(top_palabras_nrc, aes(x = reorder(word, -frecuencia), y = frecuencia, fill = sentiment)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ sentiment, scales = "free_y") +
+  labs(title = "Top 3 palabras más comunes por emoción",
+       x = "Palabras",
+       y = "Frecuencia") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+##no me gusta esta tabla, 
+#se me ocurrio idea de ver palabras que aparezcan en multiples categorias mas de 10 veces
+palabras_multiples <- texto_nrc %>%
+  group_by(word, sentiment) %>%
+  summarise(frecuencia = n()) %>%
+  ungroup() %>%
+  group_by(word) %>%
+  filter(n() > 1 & frecuencia > 10) %>%
+  arrange(word, desc(frecuencia))
+palabras_multiples
+
+#Cuidado todos estos resultados son engañosos. Pues la mayoria de god son en contextos de "oh my god" lo que hacen los programas es 
+#decir todas las amociones posibles asociadas a ello. Es decir, emociones a las que se asocia  "god", esto no es lo mismo a decir que uso se les da
