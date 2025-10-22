@@ -36,7 +36,7 @@ texto <- texto[nchar(texto) > 0]
 
 #Primera opcion-->Separar lineas por habalantes
 #Crear una tabla con dos columnas hablante y texto
-#library(dplyr)
+library(dplyr)
 #library(stringr)
 
 #texto_linea<-read_file("tarea1_kardashians/1_10.txt") 
@@ -130,6 +130,22 @@ palabras_multiples <- texto_nrc %>%
   filter(n() > 1 & frecuencia > 10) %>%
   arrange(word, desc(frecuencia))
 palabras_multiples
+
+#Crear un grafico de barras donde aparezcan las 4 palabras mas usadas para expresar sentimientos negativos y las 4 mas comunes para expresar sentimientos positivos usando  top_palabras_bin
+top_palabras_bin_filtered <- top_palabras_bin |>
+  filter(sentiment %in% c("positive", "negative")) |>
+  group_by(sentiment) |>
+  slice_head(n = 4) |>
+  ungroup()
+#ahora crear el grafico
+ggplot(top_palabras_bin_filtered, aes(x = reorder(word, -frecuencia), y = frecuencia, fill = sentiment)) +
+  geom_bar(stat = "identity") +Grafi
+  labs(title = "Top 4 palabras más comunes para sentimientos positivos y negativos",
+       x = "Palabras",
+       y = "Frecuencia") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
 
 #Cuidado todos estos resultados son engañosos. Pues la mayoria de god son en contextos de "oh my god" lo que hacen los programas es 
 #decir todas las amociones posibles asociadas a ello. Es decir, emociones a las que se asocia  "god", esto no es lo mismo a decir que uso se les da
