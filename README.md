@@ -5,7 +5,9 @@ El objetivo de esta primera tarea es realizar un análisis de las emociones pres
 Para ello se usará la librería tidytext que cuenta con distintos lexicones emocionales que permiten asignarles distintos valores a las palabras de acuerdo a diversos criterios:
 
 • Afinn: Asigna un valor entre -5 y +5 a las palabras de acuerdo a su valencia emocional. Siendo -5 extremadamente negativa y +5 extremadamente positiva
+
 • Bing: Binariza las palabras entre valencia positiva y negativa
+
 • NRC: Categoriza palabras en función a categoría emocional de pertenencia.
 
 ## **1. Ordenamiento de datos**
