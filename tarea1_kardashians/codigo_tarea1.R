@@ -1,6 +1,6 @@
 #Vamos a analizar las emociones presentes en el capitulo final de la primera temporada de The Kardashians
 #Para ello necesitamos abrir el siguiente paquete
- library(text2emotion)
+ library(text2emotion) #esta libreria implica usar python desde R.
  library(readr) #para leer txt
 texto<-read_file("tarea1_kardashians/1_10.txt")
 
@@ -49,7 +49,7 @@ rm(patron)
 #Quiero eliminar todos los "" en texto
 texto <- texto[texto != ""]
 
-#Lexicons emocionales
+#Lexicons emocionales  nuevo metodo para analisis de emociones
 library(tidytext)
 library(textdata)
 
@@ -93,14 +93,8 @@ texto_nrc|>
   count(sentiment, sort=TRUE)
 
 
-#Quiero hacer una tabla descriptiva con las 10 palabras mas comunes positivas y negativas usando texto_bin
+
 library(dplyr)
-top_palabras_bin <- texto_bin %>%
-  group_by(sentiment, word) %>%
-  summarise(frecuencia = n()) %>%
-  arrange(sentiment, desc(frecuencia)) %>%
-  slice_head(n = 10)
-top_palabras_bin
 
 #Ahora quiero hacer una tabla descriptiva con las 3 palabras mas comunes por cada emocion usando texto_nrc
 top_palabras_nrc <- texto_nrc %>%
