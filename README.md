@@ -29,7 +29,7 @@ Primero se hizo una tabla con las 3 palabras más comunes por cada emoción cate
 
 Se consideró más apropiado realizar un gráfico de barras para mostrar la frecuencia de las 4 palabras más comunes para expresar sentimientos positivos y negativos, que se presenta a continuación.
 
-![Grafico de barras que muestra las 4 palabras más usadas para demostrar sentimientos positivos y negativos. En el eje Y se indica la frecuencia de aparición que va desde 0 hasta 129. Las palabras más usadas para demostrar sentimientos positivos son “like”, “Good”, “love” y “right”. Las 4 más usadas para sentimientos negativos son “bad”, “hard”, “crazy” y”exhausted” ]( tarea1_kardashians/grafico_bin.jpeg  “Palabras más comunes para expresar emociones positivas y negativas”)
+![Grafico de barras que muestra las 4 palabras más usadas para demostrar sentimientos positivos y negativos. En el eje Y se indica la frecuencia de aparición que va desde 0 hasta 129. Las palabras más usadas para demostrar sentimientos positivos son “like”, “Good”, “love” y “right”. Las 4 más usadas para sentimientos negativos son “bad”, “hard”, “crazy” y”exhausted” ](https://github.com/augusto-rp/tareas_curso/blob/master/tarea1_kardashians/grafico_bin.jpeg) “Palabras más comunes para expresar emociones positivas y negativas”)
 
 
 
