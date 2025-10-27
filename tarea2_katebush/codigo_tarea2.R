@@ -66,14 +66,14 @@ topic=3
   dtm_kb<-convert(dfm_kb,to="topicmodels")
   
   set.seed(1) #replicabilidad
-  m_kb = LDA(dtm_kb, method = "Gibbs", k = 5,  control = list(alpha = 0.1)) #reducir a 5 temas
+  m_kb = LDA(dtm_kb, method = "Gibbs", k = 10,  control = list(alpha = 0.1)) #10 temas, 10 canciones
   
   terms(m_kb, 5)
 #me llama atencion topico
   
   
   
-  topic=3
+  topic=2
   words_kb=posterior(m_kb)$terms[topic, ] #distribucion posterior de terminos para topic definido antes
   topwords_kb =head(sort(words_kb, decreasing = T), n=50) #ordenar palabras por relevancia
   head(topwords_kb)
