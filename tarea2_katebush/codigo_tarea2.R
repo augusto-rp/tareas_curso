@@ -1,6 +1,9 @@
 
 library(quanteda)
 library(topicmodels)
+library(readtext)
+
+
 corp<-corpus_reshape(data_corpus_inaugural, to="paragraphs")
                                       #data_corpus_inaugural que viene con paquete
                                       #es pasado a parrafos
@@ -47,4 +50,35 @@ topic=3
   
   library(wordcloud)  
   wordcloud(names(topwords), topwords)
+  
+
+# Datos Kate Bush- The Dreaming -------------------------------------------
+  letras_canciones<- list.files("tarea2_katebush/letras", pattern = "\\.txt$", full.names = TRUE)
+  canciones<-corpus(readtext(letras_canciones)) #leer todos los txt en un corpus
+
+  dfm_kb<- canciones |>
+    tokens(remove_punct = TRUE)|>
+    tokens_remove(stopwords("en")) 
+  dfm_kb<-dfm(dfm_kb) #crear el dfm 
+
+  # y ahora convertir a dtm  
+  
+  dtm_kb<-convert(dfm_kb,to="topicmodels")
+  
+  set.seed(1) #replicabilidad
+  m_kb = LDA(dtm_kb, method = "Gibbs", k = 5,  control = list(alpha = 0.1)) #reducir a 5 temas
+  
+  terms(m_kb, 5)
+#me llama atencion topico
+  
+  
+  
+  topic=3
+  words_kb=posterior(m_kb)$terms[topic, ] #distribucion posterior de terminos para topic definido antes
+  topwords_kb =head(sort(words_kb, decreasing = T), n=50) #ordenar palabras por relevancia
+  head(topwords_kb)
+  
+  
+  wordcloud(names(topwords_kb), topwords_kb)
+#mas asociado a pull out the pin  
   
