@@ -70,15 +70,81 @@ topic=3
   
   terms(m_kb, 5)
 #me llama atencion topico
-  
+
+
+  inspect(dtm_kb[1:10,1:10]) #ver las primeras 10 canciones y las palabras 1 a 10
   
   
   topic=2
   words_kb=posterior(m_kb)$terms[topic, ] #distribucion posterior de terminos para topic definido antes
   topwords_kb =head(sort(words_kb, decreasing = T), n=50) #ordenar palabras por relevancia
   head(topwords_kb)
+  #probabilidad de cada palabra este asociada a topico 2
   
   
   wordcloud(names(topwords_kb), topwords_kb)
 #mas asociado a pull out the pin  
+  #BUT FRIENDS DONT LET FRIENDS MAKE WORDCLOUDS
+  #CREA UN HISTOGRAMA DE FRECUENCIA DE LAS 10 PALABRAS MAS IMPORTANTES EN TOPICO 2
+  top10_kb<- head(sort(words_kb, decreasing = T), n=10)
+  barplot(top10_kb, las=2, col="lightblue", main="Top 10 palabras del tópico 2 en canciones de Kate Bush", ylab="Importancia")  
+
   
+  #### ES RECOMENDABLE QUE SE EXPLORE OTRA CANTIDAD K DE TOPICOS
+  
+  
+  
+  
+
+# OTROS DATOS -GUIA DE NEOREACCIONARIOS -----------------------------------
+
+install.packages("epubr")  
+library(epubr)  
+
+  epub_data <- epub("tarea2_katebush/otros_textos/neoreaccionario.epub")
+  
+  
+  # Extraer texto del epuc
+  text_content <- epub_data$data[[1]]$text
+  
+  # Combinar todo en un vector
+  full_text <- paste(text_content, collapse = "\n\n")
+  #tengo que hacer preprocesamiento de este texto
+  
+  
+  #usar raiz "democra", no considerar chapter, "govern", "polit"
+  
+  # Crear archivo text, OJO que aparece en carpeta princopal
+  writeLines(full_text, "output_file.txt")
+  
+  
+  
+
+  #Convertirlo en corpus
+  neor<-readLines("tarea2_katebush/otros_textos/output_file.txt")
+  neor_corp<-corpus(neor)
+  
+  
+  
+  rm(list=c("neor", "full_text","epub_data"))
+  
+  
+  dfm_neo<- neor_corp |>
+    tokens(remove_punct = TRUE)|>
+    tokens_remove(stopwords("en")) 
+  
+  
+  dfm_neo<-dfm(dfm_neo) #crear el dfm 
+  dfm_neo<-dfm_trim(dfm_neo,min_docfreq=5) #solo palabras que aparezcan 10 veces 
+  dtm_neo<-convert(dfm_neo,to="topicmodels")
+rm(dfm_neo)
+
+
+m_neo = LDA(dtm_neo, method = "Gibbs", k = 10,  control = list(alpha = 0.1))
+terms(m_neo, 10)
+
+
+#hacer antijoin para eliminar palabra chapter
+library(dplyr)
+topic=1
+
