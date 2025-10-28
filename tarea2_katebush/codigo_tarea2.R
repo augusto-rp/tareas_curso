@@ -33,6 +33,8 @@ m = LDA(dtm, method = "Gibbs", k = 10,  control = list(alpha = 0.1))
 #metodo gibbs 
 #k es el numero de temas. Idealmente se aprende con los datos
 #Control especifica parametros de distribucion de temas. Entre mas alto alfa mas mixtura de topicos
+#alfa igual a uno implica una distribucion uniform -misma posibilidad de pertener a cualquier grupo, menor a 1 que cada palabra pertenece a un solo topico y mayor a uno implica que cada palabra pertenece a todos los topicos
+#alga es uno de los componentes de la distribucion Dirichlet
 
 
 #Veamos los terminos que componen temas
