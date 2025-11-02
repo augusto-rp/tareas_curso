@@ -1,4 +1,14 @@
 <details>
+<summary>TAREA 2</summary>
+
+# **Tarea 2**
+
+</details>
+
+
+<details>
+
+  
 <summary>TAREA 1</summary>
 
 # **Tarea 1**
