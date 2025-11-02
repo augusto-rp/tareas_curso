@@ -3,7 +3,52 @@
 
 # **Tarea 2**
 
+---
+
+El objetivo de esta tarea es realizar un análisis temática del
+libro: “A Critique of Democracy: a Guide for Neoreactionaries”( 2015) de M. Anissimov.
+Para ello se usará Latent Dirichlet
+Allocation (LDA). 
+Si bien este método de análisis temático ha [perdido
+relevancia a raíz de desarrollos en inteligencia artificial](https://towardsdatascience.com/is-lda-topic-modeling-dead-9543c18488fa/)
+y de algunas limitaciones en su metodología (la principal, que no estima el
+número de tópicos a evaluar sino que este número debe ser indicado por el
+investigador) igual se usará con el fin de evaluar su utilidad práctica en el
+análisis de textos relativamente pequeños.
+Para el análisis se requieren las
+siguientes librerías:
+
+<div style="font-size: small; line-height: 0.9;">
+`library(tm)` #funciones de pre procesamiento de texto
+<br>`library(epubr)` #abrir epub
+<br>`library(dplyr)` #operaciones de pre procesamiento de texto
+<br>`library(quanteda)` #crear dfm
+<br>`library(topicmodels)` #analisis
+<br>`library(readtext)` #abrir y crear archivo txt
+<br>`library(textclean)` #transformar contracciones
+<br>`library(SnowballC)` #para transformar palabas en sus raices (stemming)
+<br>`library(tidyverse)` #graficos
+</div>
+
+---
+
+## 1. **Ordenar**
+ 
+## 2. **Transformación de datos**
+ 
+## 3. **Modelar/Visualizar**
+ 
+## 4. **Comunicar**
+ 
+![Se presentan 5 gráficos de barras. Cada uno representa las
+6 palabras con mayor relevancia para cada uno de los 5 topicos](https://github.com/augusto-rp/tareas_curso/blob/master/grafico_tarea2.jpeg)
+
 </details>
+
+
+
+
+
 
 
 <details>
