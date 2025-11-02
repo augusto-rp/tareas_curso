@@ -7,7 +7,7 @@
 
 
 <details>
-<summary>TAREA 1</summary>
+<summary>TAREA 2</summary>
 
 # **Tarea 1**
 
