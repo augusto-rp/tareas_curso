@@ -6,6 +6,7 @@ library(quanteda) #crear dfm
 library(topicmodels)#analisis
 library(readtext) #abrir y crear archivo txt
 library(textclean) #transformar contracciones
+library(SnowballC) #para transformar palabas en sus raices (stemming)
 
 
 
@@ -53,7 +54,7 @@ full_text<- unlist(strsplit(full_text, " "))
 
 
 #hacer stemming de full_text
-library(SnowballC)
+
 full_text_stem <- wordStem(unlist(strsplit(full_text, " ")), language = "english")
 full_text_stem
 
@@ -69,10 +70,10 @@ full_text_stem
 
 
 #Convertirlo en corpus
-neor <- readLines("tarea2_katebush/otros_textos/output_file.txt")
+neor <- readLines("tarea2_katebush/otros_textos/output_file_stem.txt")
 neo_c<- corpus(neor)
 
-
+#si quiero hacer lo mismo con stem solo cambiar nombre de archivo en linea anterior
 neo_q<-as.corpus(neo_c)
 neo_tk<-tokens(neo_q)
 
@@ -85,22 +86,41 @@ dtm_neo <- convert(dfm_neo, to = "topicmodels")
 rm(dfm_neo)
 
 
-set.seed(1123)
+set.seed(3141)
 m_neo = LDA(dtm_neo,
             method = "Gibbs",
-            k = 10,
-            control = list(alpha = 0.1))
-terms(m_neo, 10)
+            k = 8,
+            control = list(alpha = 0.5))  #ajuste el alpha a 0.5 que permite mayor solapamiento de palabras entre distintos topicps
+terms(m_neo, 8)
 
 #Hoppe hace referencia a Hans-Hermann Hope 
 #indo hace referencia a indo-europeans
 
-set.seed(1123)
+set.seed(3141)
 m_neo5 = LDA(dtm_neo,
             method = "Gibbs",
             k = 5,
-            control = list(alpha = 0.1))
-terms(m_neo5, 5)
+            control = list(alpha = 0.5))
+terms(m_neo5, 10)
+
+
+set.seed(3141)
+m_neo6 = LDA(dtm_neo,
+             method = "Gibbs",
+             k = 6,
+             control = list(alpha = 0.5))
+terms(m_neo6, 10)
+
+set.seed(3141)
+m_neo4 = LDA(dtm_neo,
+             method = "Gibbs",
+             k = 4,
+             control = list(alpha = 0.5))
+terms(m_neo4, 10)
+
+
+#Despues de repetidas corridas me parece que es mejor usar la version con stemming
+#ADEMAS k ENTRE 5 Y 8. Para simplificar sera 5
 
 
 topic = 2
