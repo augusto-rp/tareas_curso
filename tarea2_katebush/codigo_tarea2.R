@@ -7,6 +7,7 @@ library(topicmodels)#analisis
 library(readtext) #abrir y crear archivo txt
 library(textclean) #transformar contracciones
 library(SnowballC) #para transformar palabas en sus raices (stemming)
+library(tidyverse) #graficos
 
 
 
@@ -79,7 +80,7 @@ neo_tk<-tokens(neo_q)
 
 dfm_neo<-dfm(neo_tk)
 
-rm(list=c("neo_q","neo_tk"))
+rm(list=c("neo_q","neo_tk","dfm_kb", "dtm_kb"))
 
 #y ahora psar de dfm a dtm
 dtm_neo <- convert(dfm_neo, to = "topicmodels")
@@ -131,12 +132,68 @@ head(topwords_kb)
 
 #ojo con letras sueltas, contracciones posiblemente habria que volver a procesamiento inicial
 
+#Hacer grafico con las 5 palabras ams comunes en los 5 topicos de m_neo5
+
+#Metodo R base
+par(mfrow=c(3,2)) #configurar grafico 3 filas 2 columnas
+for (i in 1:5) {
+  topic = i
+  words_kb = posterior(m_neo5)$terms[topic, ] #distribucion posterior de terminos para topic definido antes
+  top5_kb = head(sort(words_kb, decreasing = T), n = 5) #ordenar palabras por relevancia
+  barplot(
+    top5_kb,
+    las = 2,
+    col = "lightblue",
+    main = paste("Top 10 palabras del tópico", i, " en A Critique of Democracy: A Guide for NeoReactionaries"),
+    ylab = "Importancia"
+  )
+}
+
+#Importancai indicaon relativa dentro del topico no frecuencia absoluta
 
 
+#Metodo ggplot
 
+#Me gustaria que los 5 graficos aparezcan en un solo grafico
+datos<-list()
+for (i in 1:5){
+  words_kb = posterior(m_neo5)$terms[i, ] #distribucion posterior de terminos para topic definido antes
+  top6_kb = head(sort(words_kb, decreasing=T), n=6)
+  temp_df<-data.frame(
+    Word= names(top6_kb),
+    Importance = top6_kb,
+    Topic= factor(i)
+  )
+  datos[[i]]<-temp_df #importante el [[i]] para guardar lsita de tablas en datos
+}
 
+datos_grafico <- bind_rows(datos)
 
-
+#y ahora grafico
+ggplot(datos_grafico, aes(x = Importance, y = reorder(Word, Importance), fill = Topic)) +
+  
+ #Crear barra horizonta
+  geom_col() +
+  
+  # Separar graficso por topico
+  # The 'scales = "free_y"' ensures that the word labels for each topic are shown cleanly
+  facet_wrap(~ Topic, scales = "free_y") +
+  
+  # Agregar tituclos
+  labs(
+    title = "Top 5 palabras más importantes en A Critique of Democracy",
+    y = "Palabra",
+    x = "Importancia"
+  ) +
+  
+  # Tema minimalista
+  theme_minimal() +
+  
+  # Optional: Customize the title of each small plot (strip)
+  theme(
+    strip.text = element_text(face = "bold", size = 10),
+    plot.title = element_text(hjust = 0.5)
+  )
 
 
 # ANALISIS PREVIOS-NO CONSIDERAR ------------------------------------------
