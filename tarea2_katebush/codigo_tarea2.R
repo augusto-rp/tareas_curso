@@ -1,57 +1,69 @@
 
+library(tm) #funciones de pre procesamiento de texto
+library(epubr) #abrir epub
+library(dplyr) #operaciones de pre procesamietno de texto
+library(quanteda) #crear dfm
+library(topicmodels)#analisis
+library(readtext) #abrir y crear archivo txt
+library(textclean) #transformar contracciones
 
-library(quanteda)
-library(topicmodels)
-library(readtext)
 
 
 
+#TOPIC ANALYSIS USIND LDA GUIA DE NEOREACCIONARIOS -----------------------------------
 
 
-
-# OTROS DATOS -GUIA DE NEOREACCIONARIOS -----------------------------------
-
-library(tm)
-library(epubr)
-library(dplyr)
 
 epub_data <- epub("tarea2_katebush/otros_textos/neoreaccionario.epub")
-set.seed(1123)
+
 
 # Extraer texto del epuc
 text_content <- epub_data$data[[1]]$text
 
 # Combinar todo en un vector
 full_text <- paste(text_content, collapse = "\n\n")
+
+
 #tengo que hacer preprocesamiento de este texto
-full_text
+
 
 #poner todo en minuscula
 full_text <- tolower(full_text)
 
-
+#eliminar saltos de linea
 gsub("\n", "", full_text)
 
 #eliminar espacios donde haya multiples espacios
 full_text <- gsub("\\s+", " ", full_text)
-full_text
+
+#EXPANDIR CONTRACCIONES EN INGLES
+full_text <- replace_contraction(full_text)
+
+grepl("aren't", full_text) #para verificar
 
 #eliminar puntuacion en full_text
 full_text <- gsub("[[:punct:]]", " ", full_text)
 
 #eliminar stopwords de full_text
 full_text <- removeWords(full_text, stopwords("english"))
+full_text
+
+#tokenizar full_text
+full_text<- unlist(strsplit(full_text, " "))
+
 
 #hacer stemming de full_text
 library(SnowballC)
 full_text_stem <- wordStem(unlist(strsplit(full_text, " ")), language = "english")
 full_text_stem
 
-#eliminar espacios en blanco en full_text_stem
-full_text_stem <- gsub("\\s+", " ", full_text_stem)
 
-# Crear archivo text, OJO que aparece en carpeta princopal
-writeLines(full_text_stem, "output_file.txt")
+
+# Crear archivo text, OJO que aparece en carpeta princopal HACERLO SOLO UNA VEZ
+#writeLines(full_text_stem, "output_file_stem.txt")
+
+#writeLines(full_text, "output_file.txt") #version sin stemming
+
 
 #como archivo se crea en carpeta de trabajo hay que moverlo a la carpeta correcta antes de siguiente paso
 
@@ -63,7 +75,9 @@ neo_c<- corpus(neor)
 
 neo_q<-as.corpus(neo_c)
 neo_tk<-tokens(neo_q)
+
 dfm_neo<-dfm(neo_tk)
+
 rm(list=c("neo_q","neo_tk"))
 
 #y ahora psar de dfm a dtm
@@ -71,19 +85,29 @@ dtm_neo <- convert(dfm_neo, to = "topicmodels")
 rm(dfm_neo)
 
 
-
+set.seed(1123)
 m_neo = LDA(dtm_neo,
             method = "Gibbs",
             k = 10,
             control = list(alpha = 0.1))
 terms(m_neo, 10)
 
+#Hoppe hace referencia a Hans-Hermann Hope 
+#indo hace referencia a indo-europeans
 
+set.seed(1123)
 m_neo5 = LDA(dtm_neo,
             method = "Gibbs",
             k = 5,
             control = list(alpha = 0.1))
 terms(m_neo5, 5)
+
+
+topic = 2
+words_kb = posterior(m_neo5)$terms[topic, ] #distribucion posterior de terminos para topic definido antes
+topwords_kb = head(sort(words_kb, decreasing = T), n = 50) #ordenar palabras por relevancia
+head(topwords_kb)
+#probabilidad de cada palabra este asociada a topico 2
 
 #ojo con letras sueltas, contracciones posiblemente habria que volver a procesamiento inicial
 
@@ -92,11 +116,7 @@ terms(m_neo5, 5)
 
 
 
-########ACA SE CREA UN OBJETO NUEVO DE TIPO TOKEN
-proceso <- full_text |>
-  tokens(remove_punct = TRUE) |>
-  tokens_remove(stopwords("en"))
-#elimine stopwords, puntuation y tokenice
+
 
 
 # ANALISIS PREVIOS-NO CONSIDERAR ------------------------------------------
