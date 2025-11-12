@@ -1,4 +1,3 @@
-
 critiqu
 democraci
 guid
@@ -65,7 +64,6 @@ tall
 tower
 kingdom
 tower
-will
 complet
 2019
 50
@@ -274,7 +272,6 @@ mean
 mani
 import
 point
-will
 go
 unaddress
 intend
@@ -296,7 +293,6 @@ provid
 high
 qualiti
 govern
-will
 argu
 later
 democrat
@@ -344,7 +340,6 @@ social
 cohes
 cours
 everyon
-will
 defin
 qualiti
 govern
@@ -756,7 +751,6 @@ countri
 countri
 focus
 book
-will
 unit
 state
 largest
@@ -839,7 +833,6 @@ time
 howev
 group
 communiti
-will
 one
 leader
 evolutionari
@@ -1123,7 +1116,6 @@ option
 avail
 patch
 b
-will
 get
 pay
 one
@@ -1137,7 +1129,6 @@ one
 individu
 move
 first
-will
 make
 like
 emerg
@@ -1161,7 +1152,6 @@ stabl
 leader
 follow
 pattern
-will
 emerg
 time
 two
@@ -1601,7 +1591,6 @@ first
 individu
 histori
 societi
-will
 argu
 individu
 homer
@@ -2193,7 +2182,6 @@ mesopotamia
 demand
 unquest
 submiss
-will
 passiv
 accept
 femal
@@ -2988,7 +2976,6 @@ often
 conflict
 everi
 nation
-will
 compos
 compet
 part
@@ -3258,7 +3245,6 @@ argu
 middl
 great
 stagnat
-will
 culmin
 new
 normal
@@ -3266,7 +3252,6 @@ everyon
 poorer
 consumpt
 bean
-will
 increas
 relat
 meat
@@ -3290,7 +3275,6 @@ imagin
 scienc
 fiction
 50s
-will
 continu
 stuck
 econom
@@ -3841,7 +3825,6 @@ independ
 appeal
 major
 even
-will
 influenc
 power
 incent
@@ -4039,7 +4022,6 @@ paid
 popul
 wage
 earner
-will
 produc
 overal
 increas
@@ -4589,13 +4571,11 @@ tax
 rate
 resourc
 popul
-will
 avail
 product
 larger
 pie
 portion
-will
 expropri
 tax
 later
@@ -4638,7 +4618,6 @@ tax
 revenu
 expenditur
 ruler
-will
 want
 alloc
 wealth
@@ -4671,7 +4650,6 @@ write
 privat
 properti
 owner
-will
 includ
 famili
 exclud
@@ -4817,18 +4795,15 @@ view
 person
 endeavor
 ruler
-will
 bear
 cost
 militari
 ventur
 otherwis
-will
 encount
 immedi
 popular
 resist
-will
 thus
 pose
 threat
@@ -4860,7 +4835,6 @@ war
 conduct
 suppos
 accord
-will
 peopl
 democrat
 govern
@@ -5282,12 +5256,10 @@ debt
 howev
 debt
 load
-will
 rise
 present
 govern
 consumpt
-will
 expand
 expens
 futur
@@ -5306,7 +5278,6 @@ inflat
 impos
 futur
 public
-will
 increas
 expect
 higher
@@ -5685,7 +5656,6 @@ option
 henc
 likelihood
 war
-will
 increas
 likelihood
 war
@@ -6681,7 +6651,6 @@ indirect
 measur
 wealth
 countri
-will
 spare
 detail
 discuss
@@ -7047,7 +7016,6 @@ fund
 medicar
 govern
 project
-will
 deplet
 2026
 caus
@@ -7058,7 +7026,6 @@ trust
 fund
 social
 secur
-will
 exhaust
 2033
 continu
@@ -7877,10 +7844,8 @@ thing
 import
 recogn
 jealousi
-will
 alway
 us
-will
 alway
 impedi
 progress
@@ -7961,7 +7926,6 @@ aristocrat
 non
 democrat
 societi
-will
 wealth
 inequ
 just
@@ -8001,7 +7965,6 @@ economi
 certain
 way
 ultim
-will
 struggl
 norm
 impos
@@ -8130,7 +8093,6 @@ activ
 minim
 econom
 backlash
-will
 come
 pass
 peopl
@@ -8444,7 +8406,6 @@ monarchi
 reason
 respons
 one
-will
 attempt
 overcom
 throughout
@@ -9185,7 +9146,6 @@ amount
 polit
 power
 express
-will
 govern
 peopl
 manag
@@ -10855,7 +10815,6 @@ peopl
 adequ
 account
 bias
-will
 insignific
 sway
 result
@@ -10871,7 +10830,6 @@ small
 scale
 mass
 educ
-will
 never
 abl
 match
@@ -11119,7 +11077,6 @@ previous
 mention
 polit
 thinker
-will
 find
 point
 gone
@@ -11213,7 +11170,6 @@ still
 went
 communist
 probabl
-will
 govern
 inher
 messi
@@ -11304,7 +11260,6 @@ american
 chang
 system
 govern
-will
 turn
 american
 north
@@ -11502,7 +11457,6 @@ ocean
 citi
 think
 seastead
-will
 transform
 impact
 govern
@@ -11584,7 +11538,6 @@ currenc
 creat
 next
 valu
-will
 suffici
 financ
 govern
@@ -12269,7 +12222,6 @@ repres
 carri
 peopl
 s
-will
 monarchi
 fascism
 meritocraci
@@ -13969,10 +13921,8 @@ expect
 natur
 order
 rich
-will
 alway
 exist
-will
 peopl
 money
 question
@@ -14165,7 +14115,6 @@ class
 famili
 necessari
 certain
-will
 peopl
 move
 class
@@ -14204,7 +14153,6 @@ tax
 break
 establish
 aristocraci
-will
 requir
 prompt
 repeal
@@ -14529,7 +14477,6 @@ modern
 histori
 got
 sick
-will
 feel
 better
 2011

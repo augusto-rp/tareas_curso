@@ -61,13 +61,68 @@ full_text <- gsub("\\s+", " ", full_text)
 
 #Expandir contracciones en ingles
 full_text <- replace_contraction(full_text)
+
+#Eliminar puntuacion en full_text
+full_text <- gsub("[[:punct:]]", " ", full_text)
+
+#Eliminar stopwords de full_text. Estas son palabras que suelen de carecer contenido semantico en si mismo
+full_text <- removeWords(full_text, stopwords("english"))
+full_text
+```
+Ahora vamos a tokenizar el texto, es decir separarlo en "fichas" de palabras.
+Esto permitira posteriormente acortar las palabras a su "raiz"
+
+```r
+#tokenizar full_text
+full_text<- unlist(strsplit(full_text, " "))
+
+#hacer stemming de full_text
+full_text_stem <- wordStem(unlist(strsplit(full_text, " ")), language = "english")
+
+#Para observar como queda el texto
+full_text_stem
+```
+
+Y ahora crearemos un archivo txt con este outcome pues posteriormente convertiremos en coprus para poder realizar analisis
+
+```r
+#Archivo con stemming
+writeLines(full_text_stem, "tarea2_katebush/otros_textos/output_file_stem.txt")
 ```
 
 
 ## 2. **Transformación de datos**
- 
+
+El primer paso sera convertir el archivo txt en corpus pues este formateo es necesario para usar librerias de LDA
+
+```r
+#Convertirlo en corpus 👁️ que estamos usando archivo creado en paso anterior 👁️
+neor <- readLines("tarea2_katebush/otros_textos/output_file_stem.txt")
+neo_c<- corpus(neor)
+
+#Retokenizar archivo ahora en formato corpus
+neo_tk<-tokens(neo_c)
+
+#Esto lo convierte en un tipo de data frame (DFM) pero es solo un paso previo para convertirlo en el tipo de dataframe que usa topicmodels (DTM)
+dfm_neo<-dfm(neo_tk)
+
+#Y ahora si al formato DTM que es el que vamos a usar
+dtm_neo <- convert(dfm_neo, to = "topicmodels")
+```
+
+Como veran hemos creado muchos objetos innecesarios en el camino, asi que vamos a borrarlos
+
+```r
+rm(list=c("dfm_neo","neo_tk","neo_c", "neor"))
+```
+
+Y ahora si podemos pasar a realizar los análisis
+
+
 ## 3. **Modelar/Visualizar**
- 
+
+
+
 ## 4. **Comunicar**
  
 ![Se presentan 5 gráficos de barras. Cada uno representa las

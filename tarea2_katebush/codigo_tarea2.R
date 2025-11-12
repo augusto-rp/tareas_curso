@@ -62,12 +62,12 @@ full_text_stem
 
 
 # Crear archivo text, OJO que aparece en carpeta princopal HACERLO SOLO UNA VEZ
-#writeLines(full_text_stem, "output_file_stem.txt")
+#writeLines(full_text_stem, "tarea2_katebush/otros_textos/output_file_stem.txt")
 
 #writeLines(full_text, "output_file.txt") #version sin stemming
 
 
-#como archivo se crea en carpeta de trabajo hay que moverlo a la carpeta correcta antes de siguiente paso
+
 
 
 #Convertirlo en corpus
@@ -75,12 +75,13 @@ neor <- readLines("tarea2_katebush/otros_textos/output_file_stem.txt")
 neo_c<- corpus(neor)
 
 #si quiero hacer lo mismo con stem solo cambiar nombre de archivo en linea anterior
+
 neo_q<-as.corpus(neo_c)
-neo_tk<-tokens(neo_q)
+neo_tk<-tokens(neo_c) #
 
 dfm_neo<-dfm(neo_tk)
 
-rm(list=c("neo_q","neo_tk","dfm_kb", "dtm_kb"))
+rm(list=c("dfm_neo","neo_tk","neo_c", "neor"))
 
 #y ahora psar de dfm a dtm
 dtm_neo <- convert(dfm_neo, to = "topicmodels")
