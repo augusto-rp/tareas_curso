@@ -34,7 +34,7 @@ siguientes librerías:
 
 ## 1. **Ordenar**
 
-El archivo que vamos a utilizar esta en extensión epub y se encuentra [aquí]("tarea2_katebush/otros_textos/neoreaccionario.epub")
+El archivo que vamos a utilizar esta en extensión epub y se encuentra [aquí]("https://github.com/augusto-rp/tareas_curso/tree/master/tarea2_katebush/otros_textos")
 
 ### Lo primero entonces es abrirlo
 
