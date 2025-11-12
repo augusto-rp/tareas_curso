@@ -78,8 +78,12 @@ neo_c<- corpus(neor)
 
 neo_q<-as.corpus(neo_c)
 neo_tk<-tokens(neo_c) #
+neo_tk
 
-dfm_neo<-dfm(neo_tk)
+neo_tk<- tokens_remove(neo_tk, pattern = "s", case_insensitive = FALSE) #eliminar las s sueltas
+
+ dfm_neo<-dfm(neo_tk)
+
 
 rm(list=c("dfm_neo","neo_tk","neo_c", "neor"))
 
@@ -107,26 +111,26 @@ terms(m_neo5, 8)
 
 
 set.seed(3141)
-m_neo6 = LDA(dtm_neo,
+m_neo3 = LDA(dtm_neo,
              method = "Gibbs",
-             k = 6,
+             k = 3,
              control = list(alpha = 0.5))
-terms(m_neo6, 10)
+terms(m_neo3, 8)
 
 set.seed(3141)
 m_neo4 = LDA(dtm_neo,
              method = "Gibbs",
              k = 4,
              control = list(alpha = 0.5))
-terms(m_neo4, 10)
+terms(m_neo4, 8)
 
 
 #Despues de repetidas corridas me parece que es mejor usar la version con stemming
 #ADEMAS k ENTRE 5 Y 8. Para simplificar sera 5
 
 
-topic = 2
-words_kb = posterior(m_neo5)$terms[topic, ] #distribucion posterior de terminos para topic definido antes
+topic = 1
+words_kb = posterior(m_neo4)$terms[topic, ] #distribucion posterior de terminos para topic definido antes
 topwords_kb = head(sort(words_kb, decreasing = T), n = 50) #ordenar palabras por relevancia
 head(topwords_kb)
 #probabilidad de cada palabra este asociada a topico 2

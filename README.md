@@ -103,6 +103,9 @@ neo_c<- corpus(neor)
 #Retokenizar archivo ahora en formato corpus
 neo_tk<-tokens(neo_c)
 
+#Vamos a eliminar tambien las s sueltas. Inicialmente no habia hech este paso pero lo que sucedia es que al hacer los analisis aparecia la s suelta como palabra en topicos
+neo_tk<- tokens_remove(neo_tk, pattern = "s", case_insensitive = FALSE)
+
 #Esto lo convierte en un tipo de data frame (DFM) pero es solo un paso previo para convertirlo en el tipo de dataframe que usa topicmodels (DTM)
 dfm_neo<-dfm(neo_tk)
 
@@ -139,7 +142,8 @@ terms(m_neo, 8)
 
  Una observacion sobre **alpha** : entre más alejado de 1 más se supone que las "pertenence" a un solo tópico. Y entre mas alejado de uno, mas se solapan entre si
  
- Vemos algunas cosas raras, como que en el topic 3 "s" es una palabra. Me entra la duda de si sera resultado de tokenizar el posesivo 
+Aca si no eliminabamos la "s" en pasos anteriores habriamos visto que en el topic 3 "s" es una palabra. Me entra la duda de era sera resultado de tokenizar el posesivo.
+Por eso fue que se hizo paso de eliminarla antes
  
 ```r
 set.seed(3141)
@@ -150,9 +154,7 @@ m_neo5 = LDA(dtm_neo,
 terms(m_neo5, 8)
 ```
  Aca ya empieza a ser un poco mas facil interpretar
- El topico 1 parece hablar de crecimiendo economico, el topico dos parece hablar de una mezcla de temas economicos y electorales, el 3 no queda tan claro
- El topico 4 menciona "hopp" que hace referencia a  a Hans-Hermann Hope un filosofo paleolibertario y anarcocapitalista. Por lo que podeos suponer que tiene que ver con argumentos de este autor
- El topico 5 parece hablar de aspectos sociales y culturales de la democracia
+
  
  Haremos un nuevo intento con 4 topicos
  
@@ -164,6 +166,27 @@ m_neo4 = LDA(dtm_neo,
              control = list(alpha = 0.5))
 terms(m_neo4, 8)
 ```
++ El primer topico parece hablar de crecimiento economico parece que contrastanto democracia y monarquia
++ El segundo topico parece retomar aspectos economicos pero ahora articulado a aspectos culturales
++ El tercer topico parece hablar de aspectos electorales
++ El cuarto topico parece hablar de aspectos culturales en el marco de europa
+
+Por un tema de interpretabilidad nos vamos a quedar con el modelo de 4 topicos
+
+**Sin embargo** deberia resultar evidente que sin un conocimiento previo del texto resulta complicado interpretar los resultados
+
+Podemos ver el "peso" que cada palabra tiene dentro de determinado topico. Por ejemplo
+
+```r
+#Especificamos topico de interes
+topic = 1 
+#Distribucion posterior de terminos mas relevantes para este topico en modelo de 4 topicos
+words_kb = posterior(m_neo4)$terms[topic, ] 
+#Ordenar palabras por relevancia
+topwords_kb = head(sort(words_kb, decreasing = T), n = 50) 
+head(topwords_kb)
+```
+Aca entonces las 6 palabras mas comunes tiene  una relevancia similar en la definicion de este topico. Si comparamos esto con elr esto de topicos veremos que no es siempre tan asi
 
 
 ## 4. **Comunicar**
