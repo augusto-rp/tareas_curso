@@ -103,7 +103,7 @@ m_neo5 = LDA(dtm_neo,
             method = "Gibbs",
             k = 5,
             control = list(alpha = 0.5))
-terms(m_neo5, 10)
+terms(m_neo5, 8)
 
 
 set.seed(3141)

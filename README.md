@@ -34,7 +34,7 @@ siguientes librerías:
 
 ## 1. **Ordenar**
 
-El archivo que vamos a utilizar esta en extensión epub y se encuentra [aquí]("https://github.com/augusto-rp/tareas_curso/tree/master/tarea2_katebush/otros_textos")
+El archivo que vamos a utilizar esta en extensión epub y se encuentra [aquí](https://github.com/augusto-rp/tareas_curso/blob/master/tarea2_katebush/otros_textos/neoreaccionario.epub)
 
 ### Lo primero entonces es abrirlo
 
@@ -120,7 +120,50 @@ Y ahora si podemos pasar a realizar los análisis
 
 
 ## 3. **Modelar/Visualizar**
+ Un primer paso es que tenemos que indicarle al codigo cuantos tópicos buscar, este es uno de las limitaciones de este tipo de análisis que ha llevado a priorizar otro tipo de análisis basados en IA.
+ Pero no estoy en condiciones de aprender a programar en Phyton y generar un LLM en una semana
+ 
+ Entonces primero haremos un modelo con 8 tópicos para ver como nos va
+ 
+```r
+ Siempre poner semilla!!!
+set.seed(3141)
+m_neo = LDA(dtm_neo,
+            method = "Gibbs",
+            k = 8,
+            control = list(alpha = 0.5))  #ajuste el alpha a 0.5 que permite mayor solapamiento de palabras entre distintos topicos
+            
+#Solicitamos que nos diga las 8 palabras mas comunes
+terms(m_neo, 8)
+```
 
+ Una observacion sobre **alpha** : entre más alejado de 1 más se supone que las "pertenence" a un solo tópico. Y entre mas alejado de uno, mas se solapan entre si
+ 
+ Vemos algunas cosas raras, como que en el topic 3 "s" es una palabra. Me entra la duda de si sera resultado de tokenizar el posesivo 
+ 
+```r
+set.seed(3141)
+m_neo5 = LDA(dtm_neo,
+            method = "Gibbs",
+            k = 5,
+            control = list(alpha = 0.5))
+terms(m_neo5, 8)
+```
+ Aca ya empieza a ser un poco mas facil interpretar
+ El topico 1 parece hablar de crecimiendo economico, el topico dos parece hablar de una mezcla de temas economicos y electorales, el 3 no queda tan claro
+ El topico 4 menciona "hopp" que hace referencia a  a Hans-Hermann Hope un filosofo paleolibertario y anarcocapitalista. Por lo que podeos suponer que tiene que ver con argumentos de este autor
+ El topico 5 parece hablar de aspectos sociales y culturales de la democracia
+ 
+ Haremos un nuevo intento con 4 topicos
+ 
+```r
+set.seed(3141)
+m_neo4 = LDA(dtm_neo,
+             method = "Gibbs",
+             k = 4,
+             control = list(alpha = 0.5))
+terms(m_neo4, 8)
+```
 
 
 ## 4. **Comunicar**
