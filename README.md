@@ -33,7 +33,37 @@ siguientes librerías:
 ---
 
 ## 1. **Ordenar**
- 
+
+El archivo que vamos a utilizar esta en extensión epub y se encuentra [aquí] ("tarea2_katebush/otros_textos/neoreaccionario.epub")
+
+###Lo primero entonces es abrirlo
+
+```r
+epub_data <- epub("tarea2_katebush/otros_textos/neoreaccionario.epub")
+#Extraemos el texto y generamos un solo vector
+
+text_content <- epub_data$data[[1]]$text
+
+full_text <- paste(text_content, collapse = "\n\n")
+```
+
+###Debemos hacer cierto procesamiento de datos 
+
+```r
+#poner todo en minuscula
+full_text <- tolower(full_text)
+
+#eliminar saltos de linea
+gsub("\n", "", full_text)
+
+#eliminar espacios donde haya multiples espacios
+full_text <- gsub("\\s+", " ", full_text)
+
+#Expandir contracciones en ingles
+full_text <- replace_contraction(full_text)
+```
+
+
 ## 2. **Transformación de datos**
  
 ## 3. **Modelar/Visualizar**
