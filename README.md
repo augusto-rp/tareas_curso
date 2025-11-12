@@ -34,9 +34,9 @@ siguientes librerías:
 
 ## 1. **Ordenar**
 
-El archivo que vamos a utilizar esta en extensión epub y se encuentra [aquí] ("tarea2_katebush/otros_textos/neoreaccionario.epub")
+El archivo que vamos a utilizar esta en extensión epub y se encuentra [aquí]("tarea2_katebush/otros_textos/neoreaccionario.epub")
 
-###Lo primero entonces es abrirlo
+### Lo primero entonces es abrirlo
 
 ```r
 epub_data <- epub("tarea2_katebush/otros_textos/neoreaccionario.epub")
@@ -47,7 +47,7 @@ text_content <- epub_data$data[[1]]$text
 full_text <- paste(text_content, collapse = "\n\n")
 ```
 
-###Debemos hacer cierto procesamiento de datos 
+### Debemos hacer cierto procesamiento de datos 
 
 ```r
 #poner todo en minuscula
