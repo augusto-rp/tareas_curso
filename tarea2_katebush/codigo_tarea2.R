@@ -160,11 +160,13 @@ for (i in 1:4) {
 #Metodo ggplot
 
 library(ggplot2)
-#Me gustaria que los 5 graficos aparezcan en un solo grafico
+#Me gustaria que los 4 graficos aparezcan en un solo grafico
+
+set.seed(3141)
 datos<-list()
 for (i in 1:4){
   words_kb = posterior(m_neo4)$terms[i, ] #distribucion posterior de terminos para topic definido antes
-  top4_kb = head(sort(words_kb, decreasing=T), n=5)
+  top4_kb = head(sort(words_kb, decreasing=T), n=6)
   temp_df<-data.frame(
     Word= names(top4_kb),
     Importance = top4_kb,
@@ -187,7 +189,7 @@ ggplot(datos_grafico, aes(x = Importance, y = reorder(Word, Importance), fill = 
   
   # Agregar tituclos
   labs(
-    title = "Top 5 palabras más importantes por Tema en A Critique of Democracy",
+    title = "Top 6 palabras más importantes por Tema en A Critique of Democracy",
     y = "Palabra",
     x = "Importancia"
   ) +

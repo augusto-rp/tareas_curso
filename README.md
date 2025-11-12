@@ -234,9 +234,28 @@ ggplot(datos_grafico, aes(x = Importance, y = reorder(Word, Importance), fill = 
 ```
 
 ## 4. **Comunicar**
- 
+
 ![Se presentan 4 gráficos de barras. Cada uno representa las
 5 palabras con mayor relevancia para cada uno de los 5 topicos](https://github.com/augusto-rp/tareas_curso/blob/master/grafico_tarea2.jpeg)
+
+Como se mencionaba al inicio, este método de análisis tiene varias limitaciones. En primer lugar que hay qeu especificar el numero de topicos, por lo que la determianciond el numero optimo es un poco un proceso de ensayo y error.
+Ademas si vemos las palabras del topico 1 en el grafico de más abajo, pareciera que el stemming no funcionó tan bien pues tenemos democraci y democrat como raices distintas.
+
+Al margen de esto 
+
+#### **¿Que podemos decir de los temas en torno a los que gira la critica a la democracia en el libro?**
+
++ Pareciera que un tema importante es la comparacion entre monarquia y democracia, donde ademas esta discusion aesta articulada a temas de temporalidad y "naturaleza".
+Claramento esto abre más preguntas que las que cierra, pero al menso indica algo en qué fijarse.
+
++Un segundo tema le da peso a democracia y economia pero esta vez articulado al individuo.
+
++En el tercer tema el tema de la gobernanza tiene un gran peso como se observa en el gráfico. La governanza en este caso parece darse en conjunto con palabras que hacen referencia a lo privado y al individuo.
+
++Finalmente en el cuarto tema todas las palabras tiene un peso muy bajo. Por lo que talvez este tema no se justiifcaba tanto
+
+
+
 
 </details>
 
