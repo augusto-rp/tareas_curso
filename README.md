@@ -189,10 +189,54 @@ head(topwords_kb)
 Aca entonces las 6 palabras mas comunes tiene  una relevancia similar en la definicion de este topico. Si comparamos esto con elr esto de topicos veremos que no es siempre tan asi
 
 
+### **Finalmente vamos a graficar esto
+
+```r
+datos<-list()
+for (i in 1:4){
+  words_kb = posterior(m_neo4)$terms[i, ] #distribucion posterior de terminos para topic definido antes
+  top4_kb = head(sort(words_kb, decreasing=T), n=5)
+  temp_df<-data.frame(
+    Word= names(top4_kb),
+    Importance = top4_kb,
+    Topic= factor(i)
+  )
+  datos[[i]]<-temp_df #importante el [[i]] para guardar lsita de tablas en datos
+}
+
+datos_grafico <- bind_rows(datos)
+
+#y ahora grafico
+ggplot(datos_grafico, aes(x = Importance, y = reorder(Word, Importance), fill = Topic)) +
+  
+ #Crear barra horizonta
+  geom_col() +
+  
+  # Separar graficso por topico
+  # The 'scales = "free_y"' ensures that the word labels for each topic are shown cleanly
+  facet_wrap(~ Topic, scales = "free_y") +
+  
+  # Agregar tituclos
+  labs(
+    title = "Top 5 palabras más importantes por Tema en A Critique of Democracy",
+    y = "Palabra",
+    x = "Importancia"
+  ) +
+  
+  # Tema minimalista
+  theme_minimal() +
+  
+  # Optional: Customize the title of each small plot (strip)
+  theme(
+    strip.text = element_text(face = "bold", size = 10),
+    plot.title = element_text(hjust = 0.5)
+  )
+```
+
 ## 4. **Comunicar**
  
-![Se presentan 5 gráficos de barras. Cada uno representa las
-6 palabras con mayor relevancia para cada uno de los 5 topicos](https://github.com/augusto-rp/tareas_curso/blob/master/grafico_tarea2.jpeg)
+![Se presentan 4 gráficos de barras. Cada uno representa las
+5 palabras con mayor relevancia para cada uno de los 5 topicos](https://github.com/augusto-rp/tareas_curso/blob/master/grafico_tarea2.jpeg)
 
 </details>
 

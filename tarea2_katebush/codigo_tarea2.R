@@ -140,13 +140,13 @@ head(topwords_kb)
 #Hacer grafico con las 5 palabras ams comunes en los 5 topicos de m_neo5
 
 #Metodo R base
-par(mfrow=c(3,2)) #configurar grafico 3 filas 2 columnas
-for (i in 1:5) {
+par(mfrow=c(2,2)) #configurar grafico 3 filas 2 columnas
+for (i in 1:4) {
   topic = i
-  words_kb = posterior(m_neo5)$terms[topic, ] #distribucion posterior de terminos para topic definido antes
-  top5_kb = head(sort(words_kb, decreasing = T), n = 5) #ordenar palabras por relevancia
+  words_kb = posterior(m_neo4)$terms[topic, ] #distribucion posterior de terminos para topic definido antes
+  top4_kb = head(sort(words_kb, decreasing = T), n = 5) #ordenar palabras por relevancia
   barplot(
-    top5_kb,
+    top4_kb,
     las = 2,
     col = "lightblue",
     main = paste("Top 10 palabras del tópico", i, " en A Critique of Democracy: A Guide for NeoReactionaries"),
@@ -159,14 +159,15 @@ for (i in 1:5) {
 
 #Metodo ggplot
 
+library(ggplot2)
 #Me gustaria que los 5 graficos aparezcan en un solo grafico
 datos<-list()
-for (i in 1:5){
-  words_kb = posterior(m_neo5)$terms[i, ] #distribucion posterior de terminos para topic definido antes
-  top6_kb = head(sort(words_kb, decreasing=T), n=6)
+for (i in 1:4){
+  words_kb = posterior(m_neo4)$terms[i, ] #distribucion posterior de terminos para topic definido antes
+  top4_kb = head(sort(words_kb, decreasing=T), n=5)
   temp_df<-data.frame(
-    Word= names(top6_kb),
-    Importance = top6_kb,
+    Word= names(top4_kb),
+    Importance = top4_kb,
     Topic= factor(i)
   )
   datos[[i]]<-temp_df #importante el [[i]] para guardar lsita de tablas en datos
@@ -186,7 +187,7 @@ ggplot(datos_grafico, aes(x = Importance, y = reorder(Word, Importance), fill = 
   
   # Agregar tituclos
   labs(
-    title = "Top 5 palabras más importantes en A Critique of Democracy",
+    title = "Top 5 palabras más importantes por Tema en A Critique of Democracy",
     y = "Palabra",
     x = "Importancia"
   ) +
