@@ -238,7 +238,7 @@ ggplot(datos_grafico, aes(x = Importance, y = reorder(Word, Importance), fill = 
 ![Se presentan 4 gráficos de barras. Cada uno representa las
 5 palabras con mayor relevancia para cada uno de los 5 topicos](https://github.com/augusto-rp/tareas_curso/blob/master/grafico_tarea2.jpeg)
 
-Como se mencionaba al inicio, este método de análisis tiene varias limitaciones. En primer lugar que hay qeu especificar el numero de topicos, por lo que la determianciond el numero optimo es un poco un proceso de ensayo y error.
+Como se mencionaba al inicio, este método de análisis tiene varias limitaciones. En primer lugar que hay que especificar el numero de topicos, por lo que la determianciond el numero optimo es un poco un proceso de ensayo y error.
 Ademas si vemos las palabras del topico 1 en el grafico de más abajo, pareciera que el stemming no funcionó tan bien pues tenemos democraci y democrat como raices distintas.
 
 Al margen de esto 
@@ -252,7 +252,8 @@ Claramento esto abre más preguntas que las que cierra, pero al menso indica alg
 
 +En el tercer tema el tema de la gobernanza tiene un gran peso como se observa en el gráfico. La governanza en este caso parece darse en conjunto con palabras que hacen referencia a lo privado y al individuo.
 
-+Finalmente en el cuarto tema todas las palabras tiene un peso muy bajo. Por lo que talvez este tema no se justiifcaba tanto
++Finalmente en el cuarto tema todas las palabras tiene un peso muy bajo. Por lo que talvez este tema no se justiifcaba tanto.
+Lo que podemos decir de este es qeu parece enfocarse en sociedades y paises europeos. Pero no podemos decir mucho mas de eso
 
 
 
