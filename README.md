@@ -140,7 +140,7 @@ m_neo = LDA(dtm_neo,
 terms(m_neo, 8)
 ```
 
- Una observacion sobre **alpha** : entre más alejado de 1 más se supone que las "pertenence" a un solo tópico. Y entre mas alejado de uno, mas se solapan entre si
+ Una observacion sobre **alpha** : entre más alejado hacia abajo de 1 más se supone que las "pertenence" a un solo tópico. Y entre mas alejado hacia arriba de uno, mas se solapan entre si
  
 Aca si no eliminabamos la "s" en pasos anteriores habriamos visto que en el topic 3 "s" es una palabra. Me entra la duda de era sera resultado de tokenizar el posesivo.
 Por eso fue que se hizo paso de eliminarla antes
