@@ -6,6 +6,7 @@ library(tidytext) #ayuda en la limpieza de datos
 library(stm)
 library(quanteda)
 library(igraph)
+library(ggraph)
 library(LDAvis)
 
 #genero metadatos 
@@ -93,7 +94,7 @@ datos <- datos %>%
 #text_clean que es texto procesaso y con stop words
 #text_non que es procesado y sin stop words
 
-rm(token)
+rm(list=c("lyrics_list","token","metadatos"))
 
 
 # Structural Topic Modelling ----------------------------------------------
@@ -118,7 +119,8 @@ out <- prepDocuments(
   vocab = procesado$vocab,
   meta = procesado$meta,
   lower.thresh = 2  #solo palabras que aparezcan en al menos dos documentos
-)
+) 
+#si hago esto con la version clean se reduce demasiado
 
 
 cat("Original vocabulary size:", length(procesado$vocab), "\n")
@@ -127,15 +129,52 @@ cat("Number of documents:", length(out$documents), "\n")
 
 rm(procesado)
 
-#modelo
+
+################Modelo de muchos topicos, para ver cual balancea mejor exclusividad y coherencia
+
+n_modelos <- data.frame(
+  K = c(3, 5, 6, 7, 8, 10, 12),
+  exclusivity = NA,
+  semantic_coherence = NA
+)
+
+for(i in 1:nrow(n_modelos)) {
+  k <- n_modelos$K[i]
+  model <- stm(
+    documents = out$documents,
+    vocab = out$vocab,
+    K = k,
+    max.em.its = 100,
+    data = out$meta,
+    init.type = "Spectral"
+  )
+  n_modelos$exclusivity[i] <- mean(exclusivity(model))
+  n_modelos$semantic_coherence[i] <- mean(semanticCoherence(model, out$documents))
+}
+
+#todos los modelos covergen, pero cual es mejor?
+
+# Cual es mejor?
+library(ggplot2)
+ggplot(n_modelos, aes(x = semantic_coherence, y = exclusivity, label = K)) +
+  geom_point() +
+  geom_text(hjust = 1, vjust = 1) +
+  labs(title = "Calidad de modelo por numero de topicos")
+
+##esto sugiere el de 5 o el de 3 veamos cada uno por seprado para ver cual hace mas sentido
+
+
+
+
+#######modelo de 5
 
 set.seed(3141)
-stm_model <- stm(
+stm_model5 <- stm(
   documents = out$documents,
   vocab = out$vocab,
-  K = 5,                    # Number of topics
-  prevalence = ~ album + s(track_number),  # Topics vary by album and track position
-  max.em.its = 100,          # Maximum iterations
+  K = 5,                    # Numero de topicos
+  prevalence = ~ album ,  # Topicos varian por album
+  max.em.its = 100,          # Maximas iteraciones para lograr convergencia
   data = out$meta,
   init.type = "Spectral"
 )
@@ -143,7 +182,7 @@ stm_model <- stm(
 #modelo converge con 5 TEMAS
 
 #EXPLOREMOS
-etiquetas <- labelTopics(stm_model, n = 7)
+etiquetas <- labelTopics(stm_model5, n = 7)
 print(etiquetas)
 
 #frex es frecuencia y exclusividad, palabras que son mas exclusivas de este topico
@@ -153,7 +192,7 @@ print(etiquetas)
 
 #score usa una combinacionde da cuenta de FREFUENCIA Y DISTINVIDIDAD
 
-plot(stm_model, 
+plot(stm_model5, 
      type = "labels", 
      topics = 1:5,
      labeltype = "frex",  # encuentro que este indicar es el mas interpretable
@@ -166,24 +205,24 @@ plot(stm_model,
 #veamos como cambian estos temas, primeroe stimamos efectos de album
 prep <- estimateEffect(
   1:5 ~ album ,
-  stm_model,
+  stm_model5,
   meta = out$meta,
   uncertainty = "Global"
 )
 
 
 par(mfrow = c(2, 3))
-plot(prep, covariate = "album", topics = 1, model = stm_model, main = "Topic 1 by Album")
-plot(prep, covariate = "album", topics = 2, model = stm_model, main = "Topic 2 by Album")
-plot(prep, covariate = "album", topics = 3, model = stm_model, main = "Topic 3 by Album")
-plot(prep, covariate = "album", topics = 4, model = stm_model, main = "Topic 4 by Album")
-plot(prep, covariate = "album", topics = 5, model = stm_model, main = "Topic 5 by Album")
+plot(prep, covariate = "album", topics = 1, model = stm_model5, main = "Topic 1 by Album")
+plot(prep, covariate = "album", topics = 2, model = stm_model5, main = "Topic 2 by Album")
+plot(prep, covariate = "album", topics = 3, model = stm_model5, main = "Topic 3 by Album")
+plot(prep, covariate = "album", topics = 4, model = stm_model5, main = "Topic 4 by Album")
+plot(prep, covariate = "album", topics = 5, model = stm_model5, main = "Topic 5 by Album")
 
 
 #Cual es la cancion mas representativa para cada topico?
 
 findThoughts(
-  stm_model,
+  stm_model5,
   texts = out$meta$track_title,  
   topics = 1:5,
   n = 3,
@@ -192,12 +231,114 @@ findThoughts(
 
 #como se relacionan topicos
 
-par(mfrow=c(1,1))
-topic_corr <- topicCorr(stm_model)
-plot(topic_corr)
+
+frex_words <- labelTopics(stm_model5, n = 10, labeltype = "frex")
+
+toLDAvis(stm_model5, out$documents, R = 10) 
 
 
 
-frex_words <- labelTopics(stm_model, n = 10, labeltype = "frex")
+#######modelo de 3
 
-toLDAvis(stm_model, out$documents, R = 10) 
+set.seed(3141)
+stm_model3 <- stm(
+  documents = out$documents,
+  vocab = out$vocab,
+  K = 3,                    # Numero de topicos
+  prevalence = ~ album ,  # Topicos varian por album
+  max.em.its = 100,          # Maximas iteraciones para lograr convergencia
+  data = out$meta,
+  init.type = "Spectral"
+)
+
+#modelo converge con 5 TEMAS
+
+#EXPLOREMOS
+etiquetas3 <- labelTopics(stm_model3, n = 7)
+print(etiquetas3)
+
+#frex es frecuencia y exclusividad, palabras que son mas exclusivas de este topico
+#implica un 50% de frecuencai y 50% de exclusividad
+
+#lift distingue palabras que tienen mas probabilidad de aparecer en este topico que en otro
+
+#score usa una combinacionde da cuenta de FREFUENCIA Y DISTINVIDIDAD
+
+plot(stm_model3, 
+     type = "labels", 
+     topics = 1:3,
+     labeltype = "frex",  # encuentro que este indicar es el mas interpretable
+     n = 7,                # Number of words to show per topic
+     main = "Topics with Highest Score Words")
+
+#esto hace un poco mas interpretable los temas
+
+
+#veamos como cambian estos temas, primeroe stimamos efectos de album
+prep3 <- estimateEffect(
+  1:3 ~ album ,
+  stm_model3,
+  meta = out$meta,
+  uncertainty = "Global"
+)
+
+
+par(mfrow = c(2, 2))
+plot(prep3, covariate = "album", topics = 1, model = stm_model3, main = "Topic 1 by Album")
+plot(prep3, covariate = "album", topics = 2, model = stm_model3, main = "Topic 2 by Album")
+plot(prep3, covariate = "album", topics = 3, model = stm_model3, main = "Topic 3 by Album")
+
+
+#Cual es la cancion mas representativa para cada topico?
+
+findThoughts(
+  stm_model3,
+  texts = out$meta$track_title,  
+  topics = 1:3,
+  n = 3,
+  meta = out$meta
+)
+
+
+
+
+
+
+
+
+# Stylometric Analysis ----------------------------------------------------
+
+#como es la voz de lana del rey?
+
+
+
+
+
+###################otro menos interesante, pero solo para probar
+# Concurrencias -----------------------------------------------------------
+unique(datos$album)
+
+b2d<-datos|>
+  filter(album == "1-B2D")
+
+
+album_bigrams <- b2d |>   #ngramas de 2, apres de palabras
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
+  count(bigram, sort = TRUE)
+
+
+bigrams_separated <- album_bigrams %>%
+  separate(bigram, c("word1", "word2"), sep = " ")
+
+
+
+bigram_graph <- bigrams_separated %>%
+  filter(n > 5) %>% # solo conexiones que aparezcan mas de 5 veces, sino era ilegible
+  graph_from_data_frame()
+
+# Plot the network
+ggraph(bigram_graph, layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n), show.legend = FALSE) +
+  geom_node_point(color = "lightblue", size = 5) +
+  geom_node_text(aes(label = name), vjust = 1, hjust = 1) +
+  theme_void()
