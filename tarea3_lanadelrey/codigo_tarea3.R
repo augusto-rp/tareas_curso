@@ -10,6 +10,8 @@ library(ggraph)
 library(LDAvis)
 library(ggplot2)
 
+library(udpipe) #herramienta para anotacion de datos
+
 #genero metadatos 
 metadatos<-tribble(
   ~folder, ~nombre_album, ~ano, ~artista, ~discon,
@@ -316,7 +318,7 @@ plot(stm_model4,
 
 
 #veamos como cambian estos temas, primeroe stimamos efectos de album
-prep <- estimateEffect(
+prep_album <- estimateEffect(
   1:4 ~ album ,
   stm_model4,
   meta = out$meta,
@@ -325,16 +327,17 @@ prep <- estimateEffect(
 
 
 par(mfrow = c(2, 2))
-plot(prep, covariate = "album", topics = 1, model = stm_model4, main = "Topic 1 by Album")
-plot(prep, covariate = "album", topics = 2, model = stm_model4, main = "Topic 2 by Album")
-plot(prep, covariate = "album", topics = 3, model = stm_model4, main = "Topic 3 by Album")
-plot(prep, covariate = "album", topics = 4, model = stm_model4, main = "Topic 4 by Album")
+plot(prep_album , covariate = "album", topics = 1, model = stm_model4, main = "Topic 1 by Album")
+plot(prep_album , covariate = "album", topics = 2, model = stm_model4, main = "Topic 2 by Album")
+plot(prep_album , covariate = "album", topics = 3, model = stm_model4, main = "Topic 3 by Album")
+plot(prep_album , covariate = "album", topics = 4, model = stm_model4, main = "Topic 4 by Album")
 
 
+plot(prep_album , covariate = "album", topics = 4, model = stm_model4, main = "Topic 4 by Album")
 
 
 #veamos como cambian estos temas, primeroe stimamos efectos de artista
-prep <- estimateEffect(
+prep_artist <- estimateEffect(
   1:4 ~ artist ,
   stm_model4,
   meta = out$meta,
@@ -343,10 +346,10 @@ prep <- estimateEffect(
 
 
 par(mfrow = c(2, 2))
-plot(prep, covariate = "artist", topics = 1, model = stm_model4, main = "Topic 1 by artist")
-plot(prep, covariate = "artist", topics = 2, model = stm_model4, main = "Topic 2 by artist")
-plot(prep, covariate = "artist", topics = 3, model = stm_model4, main = "Topic 3 by artist")
-plot(prep, covariate = "artist", topics = 4, model = stm_model4, main = "Topic 4 by artist")
+plot(prep_artist, covariate = "artist", topics = 1, model = stm_model4, main = "Topic 1 by artist")
+plot(prep_artist, covariate = "artist", topics = 2, model = stm_model4, main = "Topic 2 by artist")
+plot(prep_artist, covariate = "artist", topics = 3, model = stm_model4, main = "Topic 3 by artist")
+plot(prep_artist, covariate = "artist", topics = 4, model = stm_model4, main = "Topic 4 by artist")
 
 
 
@@ -366,8 +369,8 @@ findThoughts(
 #Topico 4: Tristeza punzante             Compartido Lana y Kate
 
 
-
-
+topic_corr<-topicCorr(stm_model4)
+plot(topic_corr)
 
 
 # Stylometric Analysis ----------------------------------------------------
@@ -376,6 +379,58 @@ findThoughts(
 
 
 
+udpipe_download_model(language = "english-ewt") #descarga modelo
+
+pipe <- udpipe_load_model(file = "english-ewt-ud-2.5-191206.udpipe") #descarga archivo a carpeta
+anotacion <- udpipe_annotate(pipe, x = datos$text_clean)#idealmente contar con harta memoria para ahcer esto
+anotacion_df <- as.data.frame(anotacion)
+
+
+
+# proporcion adjetivo a verbos
+metricas <- anotacion_df |>
+  group_by(doc_id) |>
+  summarise(
+    total_words = n(),
+    adjectives = sum(upos == "ADJ"),
+    verbs = sum(upos == "VERB"),
+    aux_verbs = sum(upos == "AUX"),
+    nouns = sum(upos == "NOUN"),
+    pronouns = sum(upos == "PRON"),
+    adverbs = sum(upos == "ADV"),
+    
+    # certeza vs pensamiento hipotetico
+    modal_verbs = sum(lemma %in% c("would", "could", "should", "might", "must", "can", "will", "may")),
+    
+    # proporcion de focus en objeto o procesos
+    adj_verb_ratio = adjectives / (verbs + aux_verbs),
+    modal_ratio = modal_verbs / (verbs + aux_verbs),
+    noun_ratio = nouns / total_words,
+    pronoun_ratio = pronouns / total_words,
+    
+    # complejidad oracion
+    avg_sentence_length = n() / n_distinct(sentence_id),
+    
+    .groups = "drop"
+  )
+
+
+
+
+# pasar a base de datos
+datos_metricas <- datos |>
+  mutate(doc_id = row_number()) |>
+  left_join(
+    metricas |> 
+      mutate(doc_id = as.integer(str_extract(doc_id, "\\d+"))),
+    by = "doc_id"
+  )
+
+#eliminar avg_sentence_length que no tengo separado datos en lineas
+datos_metricas <- datos_metricas |>
+  select(-avg_sentence_length)
+
+#y ahora tengo una base de datos con los analisis de letras!!!
 
 
 ###################otro menos interesante, pero solo para probar
