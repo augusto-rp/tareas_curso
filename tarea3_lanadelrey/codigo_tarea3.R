@@ -27,7 +27,13 @@ metadatos<-tribble(
   "tarea3_lanadelrey/neverforever","3-N4E", 1980, "kate bush",3,
   "tarea3_lanadelrey/thedreaming", "4-TD", 1982, "kate bush",4,
   "tarea3_lanadelrey/houndsoflove", "5-HoL", 1985, "kate bush",5,
-  "tarea3_lanadelrey/thesensualworld", "6-TSW", 1989, "kate bush",6
+  "tarea3_lanadelrey/thesensualworld", "6-TSW", 1989, "kate bush",6,
+  "tarea3_lanadelrey/lungs", "1-L", 2009, "florence and the machine",1,
+  "tarea3_lanadelrey/ceremonials", "2-C", 2011, "florence and the machine",2,
+  "tarea3_lanadelrey/howbig","3-HBHBHB", 2015, "florence and the machine",3,
+  "tarea3_lanadelrey/highashope", "4-HaH", 2018, "florence and the machine",4,
+  "tarea3_lanadelrey/dancefever", "5-DF", 2022, "florence and the machine",5,
+  "tarea3_lanadelrey/everybodyscream", "6-ES", 2025, "florence and the machine",6
 )
 
 #leer letras, esto tuve que pedirselo a deepseek
@@ -142,9 +148,9 @@ rm(list=c("procesado", "lyrics_list"))
 
 
 ################Modelo de muchos topicos, para ver cual balancea mejor exclusividad y coherencia
-
+#3,4,5,6,7,8,9,
 n_modelos <- data.frame(
-  K = c(3,4,5,6,7,8,9,10), #hice otra prueba antes con 15 y 20 y no funcionaban tam bien en coherencia
+  K = c(3,4,5,6,7,8,9), #hice otra prueba antes con 10, 12, 15 y 20 y no funcionaban tam bien en coherencia
   exclusivity = NA,
   semantic_coherence = NA,
   converged=NA
@@ -176,7 +182,7 @@ ggplot(n_modelos, aes(x = semantic_coherence, y = exclusivity, label = K)) +
   geom_text(hjust = 1, vjust = 1) +
   labs(title = "Calidad de modelo por numero de topicos")
 
-##esto sugiere por lejos el de 5 topicos
+##esto sugiere el de 4 o 5
 
 rm(list=c("metadatos", "model"))
 
@@ -271,8 +277,93 @@ toLDAvis(stm_model5, out$documents, R = 10)
 
 
 
+############CON 4 TOPICOS
+
+#######modelo de 4
+
+set.seed(3141)
+stm_model4 <- stm(
+  documents = out$documents,
+  vocab = out$vocab,
+  K = 4,                    # Numero de topicos
+  prevalence = ~ album ,  # Topicos varian por album
+  max.em.its = 100,          # Maximas iteraciones para lograr convergencia
+  data = out$meta,
+  init.type = "Spectral"
+)
+
+#modelo converge con 4 TEMAS
+
+#EXPLOREMOS
+etiquetas4 <- labelTopics(stm_model4, n = 7)
+print(etiquetas4)
+
+#frex es frecuencia y exclusividad, palabras que son mas exclusivas de este topico
+#implica un 50% de frecuencai y 50% de exclusividad
+
+#lift distingue palabras que tienen mas probabilidad de aparecer en este topico que en otro
+
+#score usa una combinacionde da cuenta de FREFUENCIA Y DISTINVIDIDAD
+
+plot(stm_model4, 
+     type = "labels", 
+     topics = 1:4,
+     labeltype = "score",  # encuentro que este indicar es el mas interpretable
+     n = 7,                # Cuantas palabras mostrar
+     main = "Topicos: Palabras Distintivas")
+
+#esto hace un poco mas interpretable los temas
 
 
+#veamos como cambian estos temas, primeroe stimamos efectos de album
+prep <- estimateEffect(
+  1:4 ~ album ,
+  stm_model4,
+  meta = out$meta,
+  uncertainty = "Global"
+)
+
+
+par(mfrow = c(2, 2))
+plot(prep, covariate = "album", topics = 1, model = stm_model4, main = "Topic 1 by Album")
+plot(prep, covariate = "album", topics = 2, model = stm_model4, main = "Topic 2 by Album")
+plot(prep, covariate = "album", topics = 3, model = stm_model4, main = "Topic 3 by Album")
+plot(prep, covariate = "album", topics = 4, model = stm_model4, main = "Topic 4 by Album")
+
+
+
+
+#veamos como cambian estos temas, primeroe stimamos efectos de artista
+prep <- estimateEffect(
+  1:4 ~ artist ,
+  stm_model4,
+  meta = out$meta,
+  uncertainty = "Global"
+)
+
+
+par(mfrow = c(2, 2))
+plot(prep, covariate = "artist", topics = 1, model = stm_model4, main = "Topic 1 by artist")
+plot(prep, covariate = "artist", topics = 2, model = stm_model4, main = "Topic 2 by artist")
+plot(prep, covariate = "artist", topics = 3, model = stm_model4, main = "Topic 3 by artist")
+plot(prep, covariate = "artist", topics = 4, model = stm_model4, main = "Topic 4 by artist")
+
+
+
+#Cual es la cancion mas representativa para cada topico?
+
+findThoughts(
+  stm_model4,
+  texts = out$meta$track_title,  
+  topics = 1:4,
+  n = 3,
+  meta = out$meta
+)
+
+#Topico 1: Interpelacion a un otro              Muuuuy exclusivo de Lana
+#Topico 2: Paz conflictiva              Muuuuy exclusivo de Lana
+#Topico 3: Cuerpo convulso             Compartido Kate y Florence
+#Topico 4: Tristeza punzante             Compartido Lana y Kate
 
 
 
