@@ -12,7 +12,7 @@ library(ggplot2)
 
 #genero metadatos 
 metadatos<-tribble(
-  ~folder, ~nombre_album, ~ano, ~artista, ~discon
+  ~folder, ~nombre_album, ~ano, ~artista, ~discon,
   "tarea3_lanadelrey/borntodie","1-B2D", 2012, "lana del rey",1,
   "tarea3_lanadelrey/paradise", "2-Paradise", 2012,"lana del rey",2,
   "tarea3_lanadelrey/ultraviolence", "3-UV", 2014,"lana del rey",3,
@@ -24,10 +24,10 @@ metadatos<-tribble(
   "tarea3_lanadelrey/didyouknowthereisatunnel", "9-DYK", 2023,"lana del rey",9,
   "tarea3_lanadelrey/thekickinside", "1-TKI", 1978, "kate bush",1,
   "tarea3_lanadelrey/lionheart", "2-LH", 1978, "kate bush",2,
-  "tarea3_lanadelrey/neverforever","3N4E", 1980, "kate bush",3,
+  "tarea3_lanadelrey/neverforever","3-N4E", 1980, "kate bush",3,
   "tarea3_lanadelrey/thedreaming", "4-TD", 1982, "kate bush",4,
   "tarea3_lanadelrey/houndsoflove", "5-HoL", 1985, "kate bush",5,
-  "tarea3_lanadelrey/thesensualworld", "6-HoL", 1989, "kate bush",6
+  "tarea3_lanadelrey/thesensualworld", "6-TSW", 1989, "kate bush",6
 )
 
 #leer letras, esto tuve que pedirselo a deepseek
@@ -54,7 +54,9 @@ for(i in 1:nrow(metadatos)) {
       album = album_name,
       year = album_year,
       track_title = track_name,
-      text = lyrics_text
+      text = lyrics_text,
+      artist=artist_name,
+      albumN=album_number
     )
   }
 }
@@ -64,7 +66,7 @@ datos <- bind_rows(lyrics_list) %>%
   group_by(album) %>%
   mutate(track_number = row_number()) %>%
   ungroup() %>%
-  select(album, year, track_number, track_title, text)
+  select(artist,album,albumN, year, track_number, track_title, text)
 
 
 #vamos a procesar el texto, EN TEORIA todo esto me lo puedo saltar pq stm tiene su propia forma de hacer esto sin agregar columnas
@@ -136,15 +138,16 @@ cat("Original vocabulary size:", length(procesado$vocab), "\n")
 cat("Vocabulary after filtering:", length(out$vocab), "\n") #se redujo muchisimo las palabras, que shushsa
 cat("Number of documents:", length(out$documents), "\n")
 
-rm(procesado)
+rm(list=c("procesado", "lyrics_list"))
 
 
 ################Modelo de muchos topicos, para ver cual balancea mejor exclusividad y coherencia
 
 n_modelos <- data.frame(
-  K = c(3, 5, 6, 7, 8, 10, 12),
+  K = c(3,4,5,6,7,8,9,10), #hice otra prueba antes con 15 y 20 y no funcionaban tam bien en coherencia
   exclusivity = NA,
-  semantic_coherence = NA
+  semantic_coherence = NA,
+  converged=NA
 )
 
 for(i in 1:nrow(n_modelos)) {
@@ -159,7 +162,10 @@ for(i in 1:nrow(n_modelos)) {
   )
   n_modelos$exclusivity[i] <- mean(exclusivity(model))
   n_modelos$semantic_coherence[i] <- mean(semanticCoherence(model, out$documents))
+  n_modelos$converged[i] <- model$convergence$converged  # PARA VER CONVERGENCIA
 }
+
+
 
 #todos los modelos covergen, pero cual es mejor?
 
@@ -170,7 +176,7 @@ ggplot(n_modelos, aes(x = semantic_coherence, y = exclusivity, label = K)) +
   geom_text(hjust = 1, vjust = 1) +
   labs(title = "Calidad de modelo por numero de topicos")
 
-##esto sugiere el de 5 o el de 3 veamos cada uno por seprado para ver cual hace mas sentido
+##esto sugiere por lejos el de 5 topicos
 
 rm(list=c("lyrics"))
 
