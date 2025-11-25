@@ -178,7 +178,7 @@ ggplot(n_modelos, aes(x = semantic_coherence, y = exclusivity, label = K)) +
 
 ##esto sugiere por lejos el de 5 topicos
 
-rm(list=c("lyrics"))
+rm(list=c("metadatos", "model"))
 
 
 #######modelo de 5
@@ -235,6 +235,23 @@ plot(prep, covariate = "album", topics = 5, model = stm_model5, main = "Topic 5 
 
 
 
+#veamos como cambian estos temas, primeroe stimamos efectos de artista
+prep <- estimateEffect(
+  1:5 ~ artist ,
+  stm_model5,
+  meta = out$meta,
+  uncertainty = "Global"
+)
+
+
+par(mfrow = c(2, 3))
+plot(prep, covariate = "artist", topics = 1, model = stm_model5, main = "Topic 1 by artist")
+plot(prep, covariate = "artist", topics = 2, model = stm_model5, main = "Topic 2 by artist")
+plot(prep, covariate = "artist", topics = 3, model = stm_model5, main = "Topic 3 by artist")
+plot(prep, covariate = "artist", topics = 4, model = stm_model5, main = "Topic 4 by artist")
+plot(prep, covariate = "artist", topics = 5, model = stm_model5, main = "Topic 5 by artist")
+
+
 #Cual es la cancion mas representativa para cada topico?
 
 findThoughts(
@@ -254,66 +271,6 @@ toLDAvis(stm_model5, out$documents, R = 10)
 
 
 
-#######modelo de 3
-
-set.seed(3141)
-stm_model3 <- stm(
-  documents = out$documents,
-  vocab = out$vocab,
-  K = 3,                    # Numero de topicos
-  prevalence = ~ album ,  # Topicos varian por album
-  max.em.its = 100,          # Maximas iteraciones para lograr convergencia
-  data = out$meta,
-  init.type = "Spectral"
-)
-
-#modelo converge con 5 TEMAS
-
-#EXPLOREMOS
-etiquetas3 <- labelTopics(stm_model3, n = 7)
-print(etiquetas3)
-
-#frex es frecuencia y exclusividad, palabras que son mas exclusivas de este topico
-#implica un 50% de frecuencai y 50% de exclusividad
-
-#lift distingue palabras que tienen mas probabilidad de aparecer en este topico que en otro
-
-#score usa una combinacionde da cuenta de FREFUENCIA Y DISTINVIDIDAD
-
-plot(stm_model3, 
-     type = "labels", 
-     topics = 1:3,
-     labeltype = "frex",  # encuentro que este indicar es el mas interpretable
-     n = 7,               
-     main = "Topicos: palabras mas frec y exclusivas")
-
-#esto hace un poco mas interpretable los temas
-
-
-#veamos como cambian estos temas, primeroe stimamos efectos de album
-prep3 <- estimateEffect(
-  1:3 ~ album ,
-  stm_model3,
-  meta = out$meta,
-  uncertainty = "Global"
-)
-
-
-par(mfrow = c(2, 2))
-plot(prep3, covariate = "album", topics = 1, model = stm_model3, main = "Topic 1 by Album")
-plot(prep3, covariate = "album", topics = 2, model = stm_model3, main = "Topic 2 by Album")
-plot(prep3, covariate = "album", topics = 3, model = stm_model3, main = "Topic 3 by Album")
-
-
-#Cual es la cancion mas representativa para cada topico?
-
-findThoughts(
-  stm_model3,
-  texts = out$meta$track_title,  
-  topics = 1:3,
-  n = 3,
-  meta = out$meta
-)
 
 
 
