@@ -8,20 +8,26 @@ library(quanteda)
 library(igraph)
 library(ggraph)
 library(LDAvis)
+library(ggplot2)
 
 #genero metadatos 
 metadatos<-tribble(
-  ~folder, ~nombre_album, ~ano,
-  "tarea3_lanadelrey/borntodie","1-B2D", 2012,
-  "tarea3_lanadelrey/paradise", "2-Paradise", 2012,
-  "tarea3_lanadelrey/ultraviolence", "3-UV", 2014,
-  "tarea3_lanadelrey/honeymoon", "4-HM", 2015,
-  "tarea3_lanadelrey/lustforlife", "5-L4L", 2017,
-  "tarea3_lanadelrey/normanfrockwell", "6-NFR", 2019,
-  "tarea3_lanadelrey/chemtrailsovertheclub", "7-COCC", 2021,
-  "tarea3_lanadelrey/bluebannisters", "8-BB", 2021,
-  "tarea3_lanadelrey/didyouknowthereisatunnel", "9-DYK", 2023
-  
+  ~folder, ~nombre_album, ~ano, ~artista, ~discon
+  "tarea3_lanadelrey/borntodie","1-B2D", 2012, "lana del rey",1,
+  "tarea3_lanadelrey/paradise", "2-Paradise", 2012,"lana del rey",2,
+  "tarea3_lanadelrey/ultraviolence", "3-UV", 2014,"lana del rey",3,
+  "tarea3_lanadelrey/honeymoon", "4-HM", 2015,"lana del rey",4,
+  "tarea3_lanadelrey/lustforlife", "5-L4L", 2017,"lana del rey",5,
+  "tarea3_lanadelrey/normanfrockwell", "6-NFR", 2019,"lana del rey",6,
+  "tarea3_lanadelrey/chemtrailsovertheclub", "7-COCC", 2021,"lana del rey",7,
+  "tarea3_lanadelrey/bluebannisters", "8-BB", 2021,"lana del rey",8,
+  "tarea3_lanadelrey/didyouknowthereisatunnel", "9-DYK", 2023,"lana del rey",9,
+  "tarea3_lanadelrey/thekickinside", "1-TKI", 1978, "kate bush",1,
+  "tarea3_lanadelrey/lionheart", "2-LH", 1978, "kate bush",2,
+  "tarea3_lanadelrey/neverforever","3N4E", 1980, "kate bush",3,
+  "tarea3_lanadelrey/thedreaming", "4-TD", 1982, "kate bush",4,
+  "tarea3_lanadelrey/houndsoflove", "5-HoL", 1985, "kate bush",5,
+  "tarea3_lanadelrey/thesensualworld", "6-HoL", 1989, "kate bush",6
 )
 
 #leer letras, esto tuve que pedirselo a deepseek
@@ -31,6 +37,8 @@ for(i in 1:nrow(metadatos)) {
   album_folder <- metadatos$folder[i]
   album_name <- metadatos$nombre_album[i]
   album_year <- metadatos$ano[i]
+  artist_name<-metadatos$artista[i]
+  album_number<-metadatos$discon[i]
   
   cat("Processing:", album_name, "\n")
   
@@ -59,34 +67,35 @@ datos <- bind_rows(lyrics_list) %>%
   select(album, year, track_number, track_title, text)
 
 
-#vamos a procesar el texto
+#vamos a procesar el texto, EN TEORIA todo esto me lo puedo saltar pq stm tiene su propia forma de hacer esto sin agregar columnas
+#SIN EMBARGO LO INTENTE CON ESE METODO Y ME PARECIO QUE RECORTABA MUCHO Y ESO AFECTABA RESULTADOS
 
 datos <- datos %>%
   mutate(
     text_clean = str_to_lower(text),
-    text_clean = str_replace_all(text_clean, "[^a-zA-Z0-9\\s]", ""),
+   text_clean = str_replace_all(text_clean, "[^a-zA-Z0-9\\s]", ""),
     text_clean = str_squish(text_clean)
   )
 
 
 #para eliminar stop words primero tokenizamos
 
-token<-datos|>
-  unnest_tokens(word, text_clean)|>
-  anti_join(stop_words)
+# token<-datos|>
+ # unnest_tokens(word, text_clean)|>
+#  anti_join(stop_words)
 
 
 
 
 #y agregar una columna
-datos <- token |>
-  group_by(album, year, track_number, track_title, text) |>
-  summarise(text_non = paste(word, collapse = " "), .groups = "drop") |>
-  left_join(select(datos, album, track_title, text_clean), 
-            by = c("album", "track_title"))
+#datos <- token |>
+ # group_by(album, year, track_number, track_title, text) |>
+  #summarise(text_non = paste(word, collapse = " "), .groups = "drop") |>
+  #left_join(select(datos, album, track_title, text_clean), 
+#            by = c("album", "track_title"))
 
-datos <- datos %>%
-  select(album, year, track_number, track_title, text, text_clean, text_non)
+#datos <- datos %>%
+#  select(album, year, track_number, track_title, text, text_clean, text_non)
 
 
 #Ahora tengo un objeto con tres versiones de cada letra
@@ -94,7 +103,7 @@ datos <- datos %>%
 #text_clean que es texto procesaso y con stop words
 #text_non que es procesado y sin stop words
 
-rm(list=c("lyrics_list","token","metadatos"))
+# rm(list=c("lyrics_list","token","metadatos"))
 
 
 # Structural Topic Modelling ----------------------------------------------
@@ -118,9 +127,9 @@ out <- prepDocuments(
   documents = procesado$documents,
   vocab = procesado$vocab,
   meta = procesado$meta,
-  lower.thresh = 2  #solo palabras que aparezcan en al menos dos documentos
+  lower.thresh = 3  #solo palabras que aparezcan en al menos tres documentos, lo probe con dos y aparecian algunas palabras aun muy especificas
 ) 
-#si hago esto con la version clean se reduce demasiado
+
 
 
 cat("Original vocabulary size:", length(procesado$vocab), "\n")
@@ -155,7 +164,7 @@ for(i in 1:nrow(n_modelos)) {
 #todos los modelos covergen, pero cual es mejor?
 
 # Cual es mejor?
-library(ggplot2)
+
 ggplot(n_modelos, aes(x = semantic_coherence, y = exclusivity, label = K)) +
   geom_point() +
   geom_text(hjust = 1, vjust = 1) +
@@ -163,7 +172,7 @@ ggplot(n_modelos, aes(x = semantic_coherence, y = exclusivity, label = K)) +
 
 ##esto sugiere el de 5 o el de 3 veamos cada uno por seprado para ver cual hace mas sentido
 
-
+rm(list=c("lyrics"))
 
 
 #######modelo de 5
@@ -196,8 +205,8 @@ plot(stm_model5,
      type = "labels", 
      topics = 1:5,
      labeltype = "frex",  # encuentro que este indicar es el mas interpretable
-     n = 7,                # Number of words to show per topic
-     main = "Topics with Highest Score Words")
+     n = 7,                # Cuantas palabras mostrar
+     main = "Topicos: palabras mas frec y exclusivas")
 
 #esto hace un poco mas interpretable los temas
 
@@ -217,6 +226,7 @@ plot(prep, covariate = "album", topics = 2, model = stm_model5, main = "Topic 2 
 plot(prep, covariate = "album", topics = 3, model = stm_model5, main = "Topic 3 by Album")
 plot(prep, covariate = "album", topics = 4, model = stm_model5, main = "Topic 4 by Album")
 plot(prep, covariate = "album", topics = 5, model = stm_model5, main = "Topic 5 by Album")
+
 
 
 #Cual es la cancion mas representativa para cada topico?
@@ -268,8 +278,8 @@ plot(stm_model3,
      type = "labels", 
      topics = 1:3,
      labeltype = "frex",  # encuentro que este indicar es el mas interpretable
-     n = 7,                # Number of words to show per topic
-     main = "Topics with Highest Score Words")
+     n = 7,               
+     main = "Topicos: palabras mas frec y exclusivas")
 
 #esto hace un poco mas interpretable los temas
 
