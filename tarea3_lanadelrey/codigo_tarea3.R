@@ -433,6 +433,72 @@ datos_metricas <- datos_metricas |>
 #y ahora tengo una base de datos con los analisis de letras!!!
 
 
+
+
+#veamos metricas por arista y album
+
+album_metricas <- datos_metricas |>
+  group_by(album, artist) |>
+  summarise(
+    mean_adj_verb_ratio = mean(adj_verb_ratio),
+    mean_modal_ratio = mean(modal_ratio)
+  )
+
+
+#Mean Adjective-to-Verb Ratio es el balance entre el uso de adjetivos (descripcion) y verbos
+#entre mas alto el valor (cercano a uno) mas descriptivo, y entre mas bajo mas centrado en accion
+
+
+#Mean Modal Verb Ratio  es modalidad verbal (us de hipoteticos o certeza)
+#entre ams alto mas especilativo, y entre mas bajo mas concreto
+
+
+
+#hay una correlacion entre mean_adj_ver_ratio y mean_modal_ratio?
+ggplot(album_metricas, aes(x = mean_adj_verb_ratio, y = mean_modal_ratio, color = artist)) +
+  geom_point(size = 3) +
+  geom_text(aes(label = album), vjust = -1, hjust = 0.5) +
+  labs(
+    title = "Relaciones estilometricas",
+    x = "Proporcion adjetivo-verbo",
+    y = "Rango de modalidad promedio"
+  ) +
+  theme_minimal()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rm(list=c("album_bigrams","b2d","bigram_graph","lyrics_list", "metadatos","prep","topic_corr","bigrams_separated"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ###################otro menos interesante, pero solo para probar
 # Concurrencias -----------------------------------------------------------
 unique(datos$album)
