@@ -443,7 +443,12 @@ Que se ve así
 
 ## 3. **Conclusiones**
 
-Ahora podemos extraer algunas conclusiones al toamr en conjunto ambos análisis realizados
+Ahora podemos extraer algunas conclusiones al tomar en conjunto ambos análisis realizados
+
+- Las temáticas comúnes en las letras de Lana del Rey, Kate Bush y Florence and the Machine pueden ser agrupadas en 4 temáticas.
+Si bien tambíen se puede usar un número mayor de temáticas para agrupar las convergencias en sus letras, 4 tópicos logra un buen equilibrio entre la distintivida de cada tópico y sus coherencia.
+
+- Se ha propuesto denominar a estas temáticas de la siguiente amnera
 
 
 </details>
