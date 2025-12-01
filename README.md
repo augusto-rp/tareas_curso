@@ -286,10 +286,10 @@ prep_album <- estimateEffect(
 
 
 par(mfrow = c(2, 2))
-plot(prep_album , covariate = "album", topics = 1, model = stm_model4, main = "Topic 1 by Album")
-plot(prep_album , covariate = "album", topics = 2, model = stm_model4, main = "Topic 2 by Album")
-plot(prep_album , covariate = "album", topics = 3, model = stm_model4, main = "Topic 3 by Album")
-plot(prep_album , covariate = "album", topics = 4, model = stm_model4, main = "Topic 4 by Album")
+plot(prep_album , covariate = "album", topics = 1, model = stm_model4, main = "Interpelación a otros")
+plot(prep_album , covariate = "album", topics = 2, model = stm_model4, main = "Paz Conflcitiva")
+plot(prep_album , covariate = "album", topics = 3, model = stm_model4, main = "Cuerpo Convulso")
+plot(prep_album , covariate = "album", topics = 4, model = stm_model4, main = "Tristeza Punzante")
 ```
 
 **El problema con estos graficos es que se ven muuuy saturados**
@@ -298,8 +298,26 @@ plot(prep_album , covariate = "album", topics = 4, model = stm_model4, main = "T
 **UNA MEJOR ALTERNATIVA** (y mas informativa) es ver que tan improtante es presente es cada tópico en cada artista
 
 ```r
+prep_artist <- estimateEffect(
+  1:4 ~ artist ,
+  stm_model4,
+  meta = out$meta,
+  uncertainty = "Global"
+)
 
+
+par(mfrow = c(2, 2))
+plot(prep_artist, covariate = "artist", topics = 1, model = stm_model4, main = "Interpelación a otros")
+plot(prep_artist, covariate = "artist", topics = 2, model = stm_model4, main = "Paz Conflictiva")
+plot(prep_artist, covariate = "artist", topics = 3, model = stm_model4, main = "Cuerpo Convulso")
+plot(prep_artist, covariate = "artist", topics = 4, model = stm_model4, main = "Tristeza Punzante")
 ```
+
+Y miren que bien e informativo se ve esto!
+
+![imagen que muestra coherencia y exclusivida de topicos segun N](https://github.com/augusto-rp/tareas_curso/blob/master/tarea3_lanadelrey/imagenes/topicos%20por%20artista.jpeg)
+
+
 
 
 </details>
