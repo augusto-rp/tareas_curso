@@ -487,6 +487,10 @@ ggplot(album_metricas, aes(x = mean_adj_verb_ratio, y = mean_modal_ratio, color 
 
 
 
+
+
+
+
 rm(list=c("album_bigrams","b2d","bigram_graph","lyrics_list", "metadatos","prep","topic_corr","bigrams_separated"))
 
 

@@ -421,6 +421,31 @@ album_metricas <- datos_metricas |>
   )
 ```
 
+Para facilitar la visualización y comparación entre albums podemos gráficar la ubicacion de estos en relación a estos dos criterios
+
+```r
+ggplot(album_metricas, aes(x = mean_adj_verb_ratio, y = mean_modal_ratio, color = artist)) +
+  geom_point(size = 3) +
+  geom_text(aes(label = album), vjust = -1, hjust = 0.5) +
+  labs(
+    title = "Relaciones estilometricas",
+    x = "Proporcion adjetivo-verbo",
+    y = "Rango de modalidad promedio"
+  ) +
+  theme_minimal()
+```
+
+
+Que se ve así
+
+![imagen que muestra coherencia y exclusivida de topicos segun N](https://github.com/augusto-rp/tareas_curso/blob/master/tarea3_lanadelrey/imagenes/estilometricas.jpeg)
+
+
+## 3. **Conclusiones**
+
+Ahora podemos extraer algunas conclusiones al toamr en conjunto ambos análisis realizados
+
+
 </details>
 
 
