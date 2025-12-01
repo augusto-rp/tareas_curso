@@ -178,8 +178,101 @@ for(i in 1:nrow(n_modelos)) {
 print(n_modelos) #me indica estadisticos de los modelos
 ```
 
-Puedo ver esto en una imagen tambien
+### Puedo ver esto en una imagen tambien
+
+Para eso uso el siguietne código
+
+```r
+ggplot(n_modelos, aes(x = semantic_coherence, y = exclusivity, label = K)) +
+  geom_point() +
+  geom_text(hjust = 1, vjust = 1) +
+  labs(title = "Calidad de modelo por numero de topicos")
+```
+Y obtengo el siguiente gráfico de resultado
+
 ![imagen que muestra coherencia y exclusivida de topicos segun N](https://github.com/augusto-rp/tareas_curso/blob/master/tarea3_lanadelrey/imagenes/distintosmodelos.jpeg)
+
+
+## ¿QUÉ SE BUSCA AQUI?
+
+Debemos preguntarnos que k indica la mayor coherencia y exclusividad temática. **EL MODELO DE 4 TÓPICOS PARECE EL MÁS APROPIADO**
+
+K<4 tiene mayor exclusividad (es decir cada tópico tiene un lenguaje que es mas distintos de los otros), pero se pierde coherencia
+
+
+Continuemos los análisis entonces con un modelo de 4 tópicos
+
+```r
+set.seed(3141)
+stm_model4 <- stm(
+  documents = out$documents,
+  vocab = out$vocab,
+  K = 4,                    # Numero de topicos
+  prevalence = ~ album ,  # Topicos varian por album
+  max.em.its = 100,          # Maximas iteraciones para lograr convergencia
+  data = out$meta,
+  init.type = "Spectral"
+)
+```
+
+**¿Qué palabras configuran cada tópico?
+
+```r
+etiquetas4 <- labelTopics(stm_model4, n = 7)
+print(etiquetas4)
+```
+A continuación se presentan los resultados y una propuesta propia de como nombrar cada tópico
+- Frex es frecuencia y exclusividad, palabras que son mas exclusivas de este topico,implica un 50% de frecuencai y 50% de exclusividad
+
+- Lift distingue palabras que tienen mas probabilidad de aparecer en este topico que en otro
+
+- Score usa una combinacionde da cuenta de FREFUENCIA Y DISTINVIDIDAD
+
+# Análisis de Temas - Palabras Clave
+
+## Tema 1 - Interpelación a otros
+| Métrica | Palabras Principales |
+|---------|---------------------|
+| **Probabilidad Más Alta** | you, the, your, all, love, that, know |
+| **FREX** | lie, why, cry, ever, show, call, really |
+| **Lift** | learned, lie, once, worry, kinda, lately, choose |
+| **Score** | learned, lie, baby, why, you, wait, you'll |
+
+---
+
+## Tema 2 - Paz Conflictiva
+| Métrica | Palabras Principales |
+|---------|---------------------|
+| **Probabilidad Más Alta** | and, the, like, you, love, that, yeah |
+| **FREX** | god, blue, beautiful, fall, knows, bang, yeah |
+| **Lift** | dreaming, sign, peace, minds, fame, insane, pool |
+| **Score** | peace, dreaming, beautiful, lust, yeah, bang, lover |
+
+---
+
+## Tema 3 - Cuerpo convulso
+| Métrica | Palabras Principales |
+|---------|---------------------|
+| **Probabilidad Más Alta** | the, and, out, let, with, you, all |
+| **FREX** | will, shake, rolling, sky, let, before, scream |
+| **Lift** | across, along, beast, beating, desert, offer, shut |
+| **Score** | along, shake, rolling, scream, raise, will, wash |
+
+---
+
+## Tema 4 - Tristeza punzante
+| Métrica | Palabras Principales |
+|---------|---------------------|
+| **Probabilidad Más Alta** | the, you, what, and, your, don't, got |
+| **FREX** | roses, you've, oohooh, summertime, she's, hands, sad |
+| **Lift** | genius, oohooh, summertime, guns, hero, somethin, feelin |
+| **Score** | genius, baby, roses, oohooh, summertime, guns, sad |
+
+---
+
+
+*Nota: Las palabras están presentadas en orden de relevancia según cada métrica específica.*
+
 
 
 
