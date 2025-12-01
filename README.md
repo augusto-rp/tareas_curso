@@ -475,7 +475,7 @@ el nombre de la carpeta que tiene las letras es
 
 **sin embargo** en mi codigo aparece como
 
--"chemstrailovertheclub" **sin la primera s**
+- "chemtrailsovertheclub" **sin la primera s**
 
 Al hacer el resto de los análisi esto cambia un poco los resultados. No sustancialmente, pero si lo suficiente para modificar al tema originalmente llamado "Paz Conflictiva" y mover un poco los intervalos de confianza de la presencia de cada tópico en Lana del Rey. Además cambia ligeramente los valores de cohesion y exclusviidad de los modelos para distintos números de tópico si bien el modelo de k tópicos sigue siendo el más apropiado. Todo esto para decir que los resultados tal y como están presentes se realizaron sin las letras de ese disco de Lana del Rey.
 
