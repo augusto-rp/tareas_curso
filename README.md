@@ -448,7 +448,6 @@ Ahora podemos extraer algunas conclusiones al tomar en conjunto ambos análisis 
 - Las temáticas comúnes en las letras de Lana del Rey, Kate Bush y Florence and the Machine pueden ser agrupadas en 4 temáticas.
 Si bien tambíen se puede usar un número mayor de temáticas para agrupar las convergencias en sus letras, 4 tópicos logra un buen equilibrio entre la distintivida de cada tópico y sus coherencia.
 
-<<<<<<< HEAD
 
 - Se ha propuesto denominar a estas temáticas de la siguiente manera:
   - Interpelación a otros
@@ -465,7 +464,7 @@ Si bien tambíen se puede usar un número mayor de temáticas para agrupar las c
  
   ### Recordar que todos estos análisis son comparativos, entonces las conclusiones deben ser entendidas sa la luz de al comparación entre las 3 artistas. Si se dice que X artista es de Y manera, esa conclusion solo hace sentido en términso relativos a la comparación.
 
-#ATENCION
+# ATENCION
 
 Cuando estaba haciendo la revision final y generando las imagenes de la proporcion de cada topico en cada album de cada artista me di cuenta de algo.
 No aparecian datos del 7mo disco de Lana del Rey: Chemtrails Over The Country Club
