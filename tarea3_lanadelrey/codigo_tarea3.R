@@ -174,6 +174,8 @@ for(i in 1:nrow(n_modelos)) {
 }
 
 
+print(n_modelos)
+
 
 #todos los modelos covergen, pero cual es mejor?
 
@@ -333,7 +335,7 @@ plot(prep_album , covariate = "album", topics = 3, model = stm_model4, main = "T
 plot(prep_album , covariate = "album", topics = 4, model = stm_model4, main = "Topic 4 by Album")
 
 
-plot(prep_album , covariate = "album", topics = 4, model = stm_model4, main = "Topic 4 by Album")
+
 
 
 #veamos como cambian estos temas, primeroe stimamos efectos de artista

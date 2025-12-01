@@ -221,7 +221,8 @@ stm_model4 <- stm(
 etiquetas4 <- labelTopics(stm_model4, n = 7)
 print(etiquetas4)
 ```
-A continuación se presentan los resultados y una propuesta propia de como nombrar cada tópico
+A continuación se presentan los resultados **y una propuesta propia de como nombrar cada tópico**
+
 - Frex es frecuencia y exclusividad, palabras que son mas exclusivas de este topico,implica un 50% de frecuencai y 50% de exclusividad
 
 - Lift distingue palabras que tienen mas probabilidad de aparecer en este topico que en otro
@@ -273,7 +274,32 @@ A continuación se presentan los resultados y una propuesta propia de como nombr
 
 *Nota: Las palabras están presentadas en orden de relevancia según cada métrica específica.*
 
+Aprovechadno la capacidad de considerar covariables, poder ver que tan presente es cada tópico en cada album
 
+```r
+prep_album <- estimateEffect(
+  1:4 ~ album ,
+  stm_model4,
+  meta = out$meta,
+  uncertainty = "Global"
+)
+
+
+par(mfrow = c(2, 2))
+plot(prep_album , covariate = "album", topics = 1, model = stm_model4, main = "Topic 1 by Album")
+plot(prep_album , covariate = "album", topics = 2, model = stm_model4, main = "Topic 2 by Album")
+plot(prep_album , covariate = "album", topics = 3, model = stm_model4, main = "Topic 3 by Album")
+plot(prep_album , covariate = "album", topics = 4, model = stm_model4, main = "Topic 4 by Album")
+```
+
+**El problema con estos graficos es que se ven muuuy saturados**
+
+
+**UNA MEJOR ALTERNATIVA** (y mas informativa) es ver que tan improtante es presente es cada tópico en cada artista
+
+```r
+
+```
 
 
 </details>
