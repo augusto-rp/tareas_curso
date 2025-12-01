@@ -401,6 +401,25 @@ datos_metricas <- datos_metricas |>
 #y ahora tengo una base de datos con los analisis de letras!!!
 ```
 
+Hay distintas formas de agrupar esto, pero vamso a agrupar las metricas segun album. Vamos a ver el estilo lírico de cada album
+
+-**Mean Adjective-to-Verb Ratio es el balance entre el uso de adjetivos (descripcion) y verbos**
+  - entre mas alto el valor (cercano a uno) mas descriptivo, y entre más bajo mas centrado en accion
+
+
+-**Mean Modal Verb Ratio  es modalidad verbal (uso de hipoteticos o certeza)**
+  - entre más alto mas especilativo, y entre más bajo mas concreto
+
+
+
+```r
+album_metricas <- datos_metricas |>
+  group_by(album, artist) |>
+  summarise(
+    mean_adj_verb_ratio = mean(adj_verb_ratio),
+    mean_modal_ratio = mean(modal_ratio)
+  )
+```
 
 </details>
 
