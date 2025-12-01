@@ -449,8 +449,7 @@ Ahora podemos extraer algunas conclusiones al tomar en conjunto ambos análisis 
 Si bien tambíen se puede usar un número mayor de temáticas para agrupar las convergencias en sus letras, 4 tópicos logra un buen equilibrio entre la distintivida de cada tópico y sus coherencia.
 
 <<<<<<< HEAD
-- Se ha propuesto denominar a estas temáticas de la siguiente amnera
-=======
+
 - Se ha propuesto denominar a estas temáticas de la siguiente manera:
   - Interpelación a otros
   - Paz conflictiva
@@ -466,7 +465,20 @@ Si bien tambíen se puede usar un número mayor de temáticas para agrupar las c
  
   ### Recordar que todos estos análisis son comparativos, entonces las conclusiones deben ser entendidas sa la luz de al comparación entre las 3 artistas. Si se dice que X artista es de Y manera, esa conclusion solo hace sentido en términso relativos a la comparación.
 
+#ATENCION
 
+Cuando estaba haciendo la revision final y generando las imagenes de la proporcion de cada topico en cada album de cada artista me di cuenta de algo.
+No aparecian datos del 7mo disco de Lana del Rey: Chemtrails Over The Country Club
+Esto fue por una razón muy sencilla, pero muy facil de no darse cuenta.
+
+el nombre de la carpeta que tiene las letras es
+- "chem**s**trailsovertheclub""
+
+**sin embargo** en mi codigo aparece como
+
+-"chemstrailovertheclub" **sin la primera s**
+
+Al hacer el resto de los análisi esto cambia un poco los resultados. No sustancialmente, pero si lo suficiente para modificar al tema originalmente llamado "Paz Conflictiva" y mover un poco los intervalos de confianza de la presencia de cada tópico en Lana del Rey. Además cambia ligeramente los valores de cohesion y exclusviidad de los modelos para distintos números de tópico si bien el modelo de k tópicos sigue siendo el más apropiado. Todo esto para decir que los resultados tal y como están presentes se realizaron sin las letras de ese disco de Lana del Rey.
 
 </details>
 
