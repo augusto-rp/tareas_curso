@@ -6,6 +6,28 @@
 
 ---
 
+En esta tercera tarea volveremos a insistir con modelamiento temático, al igual que tarea anterior. Como vimos en la tarea anterior este tipo de análisis tiene serias limitaciones. Por lo tanto, para esta nueva entrega no se usará LDA sino Análisis Estructural de Tópicos.
+Si bien este tipo de análisis sigue siendo probabilístico y hay que indicar el número de tópicos tiene algunas ventajas sobre el LDA. En primer lugar considera covaraibles para la construcción de los tópicos, lo que permite ver su cambio en el tiempo o en función de distintas variables.
+Además haremos análisis estilísticos, que permite dar cuenta de características distintivas de los textos.
+
+## En esta tarea ¿Qué se hará?
+
+- Se analizarán las letras de las canciones de Lana del Rey, Kate Bush y Florence and the Machine, en un primer paso se modelaran la cantidad de tópicos compartidos entre estas 3 artistas.
+- Luego se realizara un análisis estilográfico de su estilo de escritura.
+
+## Librerias a usar
+
+- **tidyverse**: Conjunto de paquetes para manipulación y visualización de datos.
+- **stringr**: Proporciona funciones para trabajar fácilmente con cadenas de texto.
+- **tidytext**: Facilita el análisis de texto y la limpieza de datos textuales.
+- **stm**: Paquete para modelado de temas estructurales (topic modeling).
+- **quanteda**: Herramienta para la gestión y análisis de datos textuales.
+- **igraph**: Biblioteca para análisis y visualización de redes o grafos.
+- **ggraph**: Extensión de ggplot2 para visualizar estructuras de redes.
+- **LDAvis**: Crea visualizaciones interactivas para modelos de temas (LDA).
+- **ggplot2**: Sistema de gráficos elegantes y personalizables.
+- **udpipe**: Realiza anotación lingüística (POS tagging, lematización, etc.).
+
 </details>
 
 
