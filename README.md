@@ -42,7 +42,7 @@ metadatos<-tribble(
   "tarea3_lanadelrey/honeymoon", "4-HM", 2015,"lana del rey",4,
   "tarea3_lanadelrey/lustforlife", "5-L4L", 2017,"lana del rey",5,
   "tarea3_lanadelrey/normanfrockwell", "6-NFR", 2019,"lana del rey",6,
-  "tarea3_lanadelrey/chemtrailsovertheclub", "7-COCC", 2021,"lana del rey",7,
+  "tarea3_lanadelrey/chemstrailovertheclub", "7-COCC", 2021,"lana del rey",7,
   "tarea3_lanadelrey/bluebannisters", "8-BB", 2021,"lana del rey",8,
   "tarea3_lanadelrey/didyouknowthereisatunnel", "9-DYK", 2023,"lana del rey",9,
   "tarea3_lanadelrey/thekickinside", "1-TKI", 1978, "kate bush",1,
