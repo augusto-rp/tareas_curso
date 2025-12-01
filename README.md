@@ -465,7 +465,7 @@ Si bien tambíen se puede usar un número mayor de temáticas para agrupar las c
     - Kate Bush y Florence and the Machine parecen tener un amplio rango de liricas que se desplazan tanto desde lo más descriptivo (si bien nunca alcanzando los niveles altos de Lana del Rey) y más orientados a la acción (en el caso de Kate Bush el disco "The Dreaming" es el más orientado a la acción; y en el caso de Florence and the Machine su primer disco "Lungs", que además es su disco más conciso).
  
   ### Recordar que todos estos análisis son comparativos, entonces las conclusiones deben ser entendidas sa la luz de al comparación entre las 3 artistas. Si se dice que X artista es de Y manera, esa conclusion solo hace sentido en términso relativos a la comparación.
->>>>>>> 9021562ac490ad3e868d5ba8ca5a5f13365e29c1
+
 
 
 </details>
