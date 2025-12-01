@@ -28,6 +28,81 @@ Además haremos análisis estilísticos, que permite dar cuenta de característi
 - **ggplot2**: Sistema de gráficos elegantes y personalizables.
 - **udpipe**: Realiza anotación lingüística (POS tagging, lematización, etc.).
 
+
+## 1. **Ordenamiento de datos**
+
+Primero defino los metadatos que utilizaré
+
+```r
+metadatos<-tribble(
+  ~folder, ~nombre_album, ~ano, ~artista, ~discon,
+  "tarea3_lanadelrey/borntodie","1-B2D", 2012, "lana del rey",1,
+  "tarea3_lanadelrey/paradise", "2-Paradise", 2012,"lana del rey",2,
+  "tarea3_lanadelrey/ultraviolence", "3-UV", 2014,"lana del rey",3,
+  "tarea3_lanadelrey/honeymoon", "4-HM", 2015,"lana del rey",4,
+  "tarea3_lanadelrey/lustforlife", "5-L4L", 2017,"lana del rey",5,
+  "tarea3_lanadelrey/normanfrockwell", "6-NFR", 2019,"lana del rey",6,
+  "tarea3_lanadelrey/chemtrailsovertheclub", "7-COCC", 2021,"lana del rey",7,
+  "tarea3_lanadelrey/bluebannisters", "8-BB", 2021,"lana del rey",8,
+  "tarea3_lanadelrey/didyouknowthereisatunnel", "9-DYK", 2023,"lana del rey",9,
+  "tarea3_lanadelrey/thekickinside", "1-TKI", 1978, "kate bush",1,
+  "tarea3_lanadelrey/lionheart", "2-LH", 1978, "kate bush",2,
+  "tarea3_lanadelrey/neverforever","3-N4E", 1980, "kate bush",3,
+  "tarea3_lanadelrey/thedreaming", "4-TD", 1982, "kate bush",4,
+  "tarea3_lanadelrey/houndsoflove", "5-HoL", 1985, "kate bush",5,
+  "tarea3_lanadelrey/thesensualworld", "6-TSW", 1989, "kate bush",6,
+  "tarea3_lanadelrey/lungs", "1-L", 2009, "florence and the machine",1,
+  "tarea3_lanadelrey/ceremonials", "2-C", 2011, "florence and the machine",2,
+  "tarea3_lanadelrey/howbig","3-HBHBHB", 2015, "florence and the machine",3,
+  "tarea3_lanadelrey/highashope", "4-HaH", 2018, "florence and the machine",4,
+  "tarea3_lanadelrey/dancefever", "5-DF", 2022, "florence and the machine",5,
+  "tarea3_lanadelrey/everybodyscream", "6-ES", 2025, "florence and the machine",6
+)
+```
+
+Y ahora leo las letras de todos los archivos txt dentro de cada carpeta
+
+```r
+lyrics_list <- list()
+
+for(i in 1:nrow(metadatos)) {
+  album_folder <- metadatos$folder[i] #estoy señalando a qué elemento de la estructura de metadatos corresponde cada columna en df que creare
+  album_name <- metadatos$nombre_album[i]
+  album_year <- metadatos$ano[i]
+  artist_name<-metadatos$artista[i]
+  album_number<-metadatos$discon[i]
+  
+  cat("Processing:", album_name, "\n")
+  
+  # Extraer archivs txt
+  txt_files <- list.files(album_folder, pattern = "\\.txt$", full.names = TRUE)
+  
+  # Leer cada archivo
+  for(file in txt_files) {
+    lyrics_text <- readLines(file, warn = FALSE) %>% paste(collapse = " ")
+    track_name <- tools::file_path_sans_ext(basename(file))
+    
+    lyrics_list[[length(lyrics_list) + 1]] <- data.frame(
+      album = album_name,
+      year = album_year,
+      track_title = track_name,
+      text = lyrics_text,
+      artist=artist_name,
+      albumN=album_number
+    )
+  }
+}
+
+
+datos <- bind_rows(lyrics_list) |> #y creo el data frame con los datos leidos
+  group_by(album) |>
+  mutate(track_number = row_number()) |>
+  ungroup() |>
+  select(artist,album,albumN, year, track_number, track_title, text)
+
+```
+
+
 </details>
 
 
