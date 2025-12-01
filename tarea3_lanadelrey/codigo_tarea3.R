@@ -348,12 +348,14 @@ prep_artist <- estimateEffect(
 
 
 par(mfrow = c(2, 2))
-plot(prep_artist, covariate = "artist", topics = 1, model = stm_model4, main = "Topic 1 by artist")
-plot(prep_artist, covariate = "artist", topics = 2, model = stm_model4, main = "Topic 2 by artist")
-plot(prep_artist, covariate = "artist", topics = 3, model = stm_model4, main = "Topic 3 by artist")
-plot(prep_artist, covariate = "artist", topics = 4, model = stm_model4, main = "Topic 4 by artist")
+plot(prep_artist, covariate = "artist", topics = 1, model = stm_model4, main = "Interpelación a otros")
+plot(prep_artist, covariate = "artist", topics = 2, model = stm_model4, main = "Paz Conflictiva")
+plot(prep_artist, covariate = "artist", topics = 3, model = stm_model4, main = "Cuerpo Convulso")
+plot(prep_artist, covariate = "artist", topics = 4, model = stm_model4, main = "Tristeza Punzante")
 
 
+  
+  
 
 #Cual es la cancion mas representativa para cada topico?
 

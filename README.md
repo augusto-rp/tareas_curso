@@ -147,7 +147,7 @@ cat("Vocabulary after filtering:", length(out$vocab), "\n") #indica vocabulario 
 ```
 
 
-## 2. **Analisis de datos**
+## 2. **Analisis, modelamiento y visualización de datos**
 
 Ahora se viene la parte entrete. Como hay que indicar la cantidad (k) de topicos, lo que se puede hacer es modelar dsitintso numeros de topicso y ver si covnergen o no. Así como algunos indicadores de estos modelos
 
@@ -313,11 +313,93 @@ plot(prep_artist, covariate = "artist", topics = 3, model = stm_model4, main = "
 plot(prep_artist, covariate = "artist", topics = 4, model = stm_model4, main = "Tristeza Punzante")
 ```
 
-Y miren que bien e informativo se ve esto!
+### Y miren que bien e informativo se ve esto!
 
 ![imagen que muestra coherencia y exclusivida de topicos segun N](https://github.com/augusto-rp/tareas_curso/blob/master/tarea3_lanadelrey/imagenes/topicos%20por%20artista.jpeg)
 
 
+**Cual es la cancion mas representativa para cada topico?**
+
+```r
+findThoughts(
+  stm_model4,
+  texts = out$meta$track_title,  
+  topics = 1:4,
+  n = 3,
+  meta = out$meta
+)
+
+#Haga usted sus propios juicios
+```
+
+
+# PERO NO HEMOS TERMINADO!
+
+## ¿Cómo es el estilo lírico de cada artista?
+
+Hasta acá no hemos hecho anda muy distinto a al entrega pasada. Hemos agregado la capacidad de introducir covariables para ver movimientos o comparar topicos entre metadatos.
+Pero vamos más allá, haciendo análisis estilométrico
+
+
+```r
+udpipe_download_model(language = "english-ewt") #descarga modelo que categorizada palabras 
+
+pipe <- udpipe_load_model(file = "english-ewt-ud-2.5-191206.udpipe") #descarga archivo a carpeta
+anotacion <- udpipe_annotate(pipe, x = datos$text_clean) #idealmente contar con harta memoria para ahcer esto RAM, hay otra opcion que lo ahce mas escalonado
+anotacion_df <- as.data.frame(anotacion)
+```
+
+
+En base a la anotación realizada por la funcio udpipe anterior, vamos a construir una serie de métricas
+
+```r
+metricas <- anotacion_df |>
+  group_by(doc_id) |>
+  summarise(
+    total_words = n(),
+    adjectives = sum(upos == "ADJ"),
+    verbs = sum(upos == "VERB"),
+    aux_verbs = sum(upos == "AUX"),
+    nouns = sum(upos == "NOUN"),
+    pronouns = sum(upos == "PRON"),
+    adverbs = sum(upos == "ADV"),
+    
+    # certeza vs pensamiento hipotetico
+    modal_verbs = sum(lemma %in% c("would", "could", "should", "might", "must", "can", "will", "may")),
+    
+    # proporcion de focus en objeto o procesos
+    adj_verb_ratio = adjectives / (verbs + aux_verbs),
+    modal_ratio = modal_verbs / (verbs + aux_verbs),
+    noun_ratio = nouns / total_words,
+    pronoun_ratio = pronouns / total_words,
+    
+    # complejidad oracion
+    avg_sentence_length = n() / n_distinct(sentence_id),
+    
+    .groups = "drop"
+  )
+```
+
+
+
+Y ahora crearemso un df con las metricas anteriores y el resto de los datos
+
+```r
+datos_metricas <- datos |>
+  mutate(doc_id = row_number()) |>
+  left_join(
+    metricas |> 
+      mutate(doc_id = as.integer(str_extract(doc_id, "\\d+"))),
+    by = "doc_id"
+  )
+
+#eliminar avg_sentence_length que no tengo separado datos en lineas, esto seriviria para analisis de que tan larga son las oraciones
+
+datos_metricas <- datos_metricas |>
+  select(-avg_sentence_length)
+
+#y ahora tengo una base de datos con los analisis de letras!!!
+```
 
 
 </details>
