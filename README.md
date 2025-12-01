@@ -443,7 +443,25 @@ Que se ve así
 
 ## 3. **Conclusiones**
 
-Ahora podemos extraer algunas conclusiones al toamr en conjunto ambos análisis realizados
+Ahora podemos extraer algunas conclusiones al tomar en conjunto ambos análisis realizados
+
+- Las temáticas comúnes en las letras de Lana del Rey, Kate Bush y Florence and the Machine pueden ser agrupadas en 4 temáticas.
+Si bien tambíen se puede usar un número mayor de temáticas para agrupar las convergencias en sus letras, 4 tópicos logra un buen equilibrio entre la distintivida de cada tópico y sus coherencia.
+
+- Se ha propuesto denominar a estas temáticas de la siguiente manera:
+  - Interpelación a otros
+  - Paz conflictiva
+  - Cuerpo convulso
+  - Tristeza punzante
+  
+- Las dos primeras temáticas son significativamente más presentes en Lana del Rey que en las otras dosa artistas. Además la temática de "Cuerpo Convulso" aparece muy poco en Lana del Rey, y de forma muy fuerte en Florence and the Machine si bien no alcanza a ser significativamente más alto que en Kate Bush. Por otra parte "Tristeza Punzante" se observa en niveles similares entre Lana del Rey y Kate Bush. Si se desea ver la presencia de estos temas por cada album de cada artista se pueden ver las imagenes [aqui](https://github.com/augusto-rp/tareas_curso/tree/master/tarea3_lanadelrey/imagenes)
+  
+- **Al observar análisis estilométricos:**
+    - Lo primero que llama la atencion es que todos los albumes tienen una baja proporcion de verbos modales. Lo que implica que sus letras son poco especulativas o hipóteticas y más bien se refieren a hechos concretos. El disco ás especulativo corresponde a "The Sensual World" de Kate Bush si bien sus niveles siguen siendo relativamente bajos.
+    - La mayoría de discos de Lana del Rey parecen tender a teners los niveles más altos de descripciones. Esto es interesante a la luz de los tópicos más presentes en Lana del Rey. Notamos que el tópico "Cuerpo Convulso" era el tema menos presente en esta artistica, **se puede hipotetizar que el cuerpo en Lana del Rey aparece más como un ente pasivo, que es descrito en vez de un cuerpo activo que sería más común en las otras artistas** Incluso se peude pensar que el tópico "Interpelación al Otro" no se refiere tanto a una actividad, sino más bien a uan descripción de los efectos de la relación con un otro (y que se vería reflejado en palabras como "lie", "learned", "wait".
+    - Kate Bush y Florence and the Machine parecen tener un amplio rango de liricas que se desplazan tanto desde lo más descriptivo (si bien nunca alcanzando los niveles altos de Lana del Rey) y más orientados a la acción (en el caso de Kate Bush el disco "The Dreaming" es el más orientado a la acción; y en el caso de Florence and the Machine su primer disco "Lungs", que además es su disco más conciso).
+ 
+  ### Recordar que todos estos análisis son comparativos, entonces las conclusiones deben ser entendidas sa la luz de al comparación entre las 3 artistas. Si se dice que X artista es de Y manera, esa conclusion solo hace sentido en términso relativos a la comparación.
 
 
 </details>
