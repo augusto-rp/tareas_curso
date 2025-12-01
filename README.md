@@ -29,7 +29,7 @@ Además haremos análisis estilísticos, que permite dar cuenta de característi
 - **udpipe**: Realiza anotación lingüística (POS tagging, lematización, etc.).
 
 
-## 1. **Ordenamiento de datos**
+## 1. **Ordenamiento y preparación de datos**
 
 Primero defino los metadatos que utilizaré
 
@@ -101,6 +101,86 @@ datos <- bind_rows(lyrics_list) |> #y creo el data frame con los datos leidos
   select(artist,album,albumN, year, track_number, track_title, text)
 
 ```
+
+Ahora toca hacer limpieza de datos, en teoria este paso me lo puedo saltar pues como se verá más adelante stm tiene funciones de limpieza, PERO no me parecieron tan buenas como estas
+
+```r
+datos <- datos %>%
+  mutate(
+    text_clean = str_to_lower(text),
+   text_clean = str_replace_all(text_clean, "[^a-zA-Z0-9\\s]", ""),
+    text_clean = str_squish(text_clean)
+  )
+
+```
+
+A continuación se haran dos cosas, primero un procesamietno extra de datos donde voy a indicar que solo se consdieran palabras que tienen al menos 3 letras.
+Este es el paso por el que podría haberme saltado lo anterior. El tema es que ene ste apso además extraido los datos de texto del df original 
+Luego de eso uso la funcion "prepDocuments" que crea una lista de elementos que será lo utilizado para el análisis final
+
+```r
+procesado <- textProcessor(
+  documents = datos$text_clean,
+  metadata = datos,
+  lowercase = FALSE,  #LOL, PODRIA HABERME SALTADO LO ANTERIOR
+  removestopwords = FALSE,  
+  removenumbers = FALSE,    
+  removepunctuation = FALSE, 
+  stem = FALSE,              # NO quiero ahcer stemming que no funciona tan bien 
+  wordLengths = c(3, Inf)   
+)
+
+#PREPARACION PARA STM
+out <- prepDocuments(
+  documents = procesado$documents, #documentos a analizar
+  vocab = procesado$vocab,
+  meta = procesado$meta, #indico metadatos
+  lower.thresh = 3  #solo palabras que aparezcan en al menos tres documentos, lo probe con dos y aparecian algunas palabras aun muy especificas
+) 
+```
+
+Esto reduce muchisimo la cantidad de vocabulario a analziar como se puede ver con los siguientes comandos
+
+```r
+cat("Original vocabulary size:", length(procesado$vocab), "\n") #indica vocabulario antes de remover palabras que no aparecen en al menos 3 canciones
+cat("Vocabulary after filtering:", length(out$vocab), "\n") #indica vocabulario tras remover palabras que aparecen en al menos 3 canciones
+```
+
+
+## 2. **Analisis de datos**
+
+Ahora se viene la parte entrete. Como hay que indicar la cantidad (k) de topicos, lo que se puede hacer es modelar dsitintso numeros de topicso y ver si covnergen o no. Así como algunos indicadores de estos modelos
+
+```r
+n_modelos <- data.frame(
+  K = c(3,4,5,6,7,8,9), #Probare modelar los topicos con estos numeros
+  exclusivity = NA,
+  semantic_coherence = NA,
+  converged=NA
+)
+
+for(i in 1:nrow(n_modelos)) {
+  k <- n_modelos$K[i]
+  model <- stm(
+    documents = out$documents,
+    vocab = out$vocab,
+    K = k,
+    max.em.its = 100,
+    data = out$meta,
+    init.type = "Spectral"
+  )
+  n_modelos$exclusivity[i] <- mean(exclusivity(model)) #aca y en la proxima linea construyo dos indicadores para evaluar modelos
+  n_modelos$semantic_coherence[i] <- mean(semanticCoherence(model, out$documents))
+  n_modelos$converged[i] <- model$convergence$converged  # PARA VER CONVERGENCIA
+}
+
+
+print(n_modelos) #me indica estadisticos de los modelos
+```
+
+Puedo ver esto en una imagen tambien
+![imagen que muestra coherencia y exclusivida de topicos segun N](https://github.com/augusto-rp/tareas_curso/blob/master/tarea3_lanadelrey/imagenes/distintosmodelos.jpeg)
+
 
 
 </details>

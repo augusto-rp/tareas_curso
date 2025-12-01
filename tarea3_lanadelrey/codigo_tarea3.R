@@ -70,10 +70,10 @@ for(i in 1:nrow(metadatos)) {
 }
 
 # Crear data frame
-datos <- bind_rows(lyrics_list) %>%
-  group_by(album) %>%
-  mutate(track_number = row_number()) %>%
-  ungroup() %>%
+datos <- bind_rows(lyrics_list) |>
+  group_by(album) |>
+  mutate(track_number = row_number()) |>
+  ungroup() |>
   select(artist,album,albumN, year, track_number, track_title, text)
 
 
