@@ -9,6 +9,10 @@ library(igraph)
 library(ggraph)
 library(LDAvis)
 
+
+# Base de datos -----------------------------------------------------------
+
+
 #genero metadatos 
 metadatos<-tribble(
   ~folder, ~nombre_album, ~ano,
@@ -59,6 +63,8 @@ datos <- bind_rows(lyrics_list) %>%
   select(album, year, track_number, track_title, text)
 
 
+# Procesamiento de texto --------------------------------------------------
+
 #vamos a procesar el texto
 
 datos <- datos %>%
@@ -76,8 +82,6 @@ token<-datos|>
   anti_join(stop_words)
 
 
-
-
 #y agregar una columna
 datos <- token |>
   group_by(album, year, track_number, track_title, text) |>
@@ -88,7 +92,6 @@ datos <- token |>
 datos <- datos %>%
   select(album, year, track_number, track_title, text, text_clean, text_non)
 
-
 #Ahora tengo un objeto con tres versiones de cada letra
 #text que es texto original
 #text_clean que es texto procesaso y con stop words
@@ -97,7 +100,10 @@ datos <- datos %>%
 rm(list=c("lyrics_list","token","metadatos"))
 
 
-# Structural Topic Modelling ----------------------------------------------
+# Análisis ----------------------------------------------------------------
+
+
+## Structural Topic Modelling ----------------------------------------------
 
 #un upgrade respecto a LDA que fue lo que se hizo en tarea anterios
 
@@ -232,7 +238,7 @@ findThoughts(
 #como se relacionan topicos
 
 
-frex_words <- labelTopics(stm_model5, n = 10, labeltype = "frex")
+frex_words <- labelTopics(stm_model5, n = 10)
 
 toLDAvis(stm_model5, out$documents, R = 10) 
 
@@ -256,6 +262,7 @@ stm_model3 <- stm(
 #EXPLOREMOS
 etiquetas3 <- labelTopics(stm_model3, n = 7)
 print(etiquetas3)
+
 
 #frex es frecuencia y exclusividad, palabras que son mas exclusivas de este topico
 #implica un 50% de frecuencai y 50% de exclusividad
@@ -303,9 +310,6 @@ findThoughts(
 
 
 
-
-
-
 # Stylometric Analysis ----------------------------------------------------
 
 #como es la voz de lana del rey?
@@ -342,3 +346,4 @@ ggraph(bigram_graph, layout = "fr") +
   geom_node_point(color = "lightblue", size = 5) +
   geom_node_text(aes(label = name), vjust = 1, hjust = 1) +
   theme_void()
+

@@ -1,23 +1,24 @@
 
+# Librerías
+
 library(tm) #funciones de pre procesamiento de texto
 library(epubr) #abrir epub
-library(dplyr) #operaciones de pre procesamietno de texto
+library(dplyr) 
 library(quanteda) #crear dfm
 library(topicmodels)#analisis
 library(readtext) #abrir y crear archivo txt
 library(textclean) #transformar contracciones
 library(SnowballC) #para transformar palabas en sus raices (stemming)
-library(tidyverse) #graficos
+library(tidyverse) 
 
+# TOPIC ANALYSIS USIND LDA GUIA DE NEOREACCIONARIOS -----------------------
 
-
-
-#TOPIC ANALYSIS USIND LDA GUIA DE NEOREACCIONARIOS -----------------------------------
-
-
+# Carga de base de datos:
 
 epub_data <- epub("tarea2_katebush/otros_textos/neoreaccionario.epub")
 
+
+# Limpieza BBDD -----------------------------------------------------------
 
 # Extraer texto del epuc
 text_content <- epub_data$data[[1]]$text
@@ -25,9 +26,7 @@ text_content <- epub_data$data[[1]]$text
 # Combinar todo en un vector
 full_text <- paste(text_content, collapse = "\n\n")
 
-
 #tengo que hacer preprocesamiento de este texto
-
 
 #poner todo en minuscula
 full_text <- tolower(full_text)
@@ -53,15 +52,15 @@ full_text
 #tokenizar full_text
 full_text<- unlist(strsplit(full_text, " "))
 
-
 #hacer stemming de full_text
 
 full_text_stem <- wordStem(unlist(strsplit(full_text, " ")), language = "english")
 full_text_stem
 
 
+# Guardar base de datos limpia --------------------------------------------
 
-# Crear archivo text, OJO que aparece en carpeta princopal HACERLO SOLO UNA VEZ
+#Crear archivo text, OJO que aparece en carpeta princopal HACERLO SOLO UNA VEZ
 #writeLines(full_text_stem, "tarea2_katebush/otros_textos/output_file_stem.txt")
 
 #writeLines(full_text, "output_file.txt") #version sin stemming
@@ -69,6 +68,7 @@ full_text_stem
 
 
 
+# Análisis ----------------------------------------------------------------
 
 #Convertirlo en corpus
 neor <- readLines("tarea2_katebush/otros_textos/output_file_stem.txt")
@@ -77,70 +77,82 @@ neo_c<- corpus(neor)
 #si quiero hacer lo mismo con stem solo cambiar nombre de archivo en linea anterior
 
 neo_q<-as.corpus(neo_c)
-neo_tk<-tokens(neo_c) #
+neo_tk<-tokens(neo_c) 
 neo_tk
 
 neo_tk<- tokens_remove(neo_tk, pattern = "s", case_insensitive = FALSE) #eliminar las s sueltas
 
- dfm_neo<-dfm(neo_tk)
+dfm_neo<-dfm(neo_tk)
 
-
-rm(list=c("dfm_neo","neo_tk","neo_c", "neor"))
+rm(list=c("neo_tk","neo_c", "neor"))
 
 #y ahora psar de dfm a dtm
-dtm_neo <- convert(dfm_neo, to = "topicmodels")
-rm(dfm_neo)
 
+dtm_neo <- convert(dfm_neo, to = "topicmodels")
 
 set.seed(3141)
+
 m_neo = LDA(dtm_neo,
             method = "Gibbs",
             k = 8,
             control = list(alpha = 0.5))  #ajuste el alpha a 0.5 que permite mayor solapamiento de palabras entre distintos topicps
+
 terms(m_neo, 8)
 
 #Hoppe hace referencia a Hans-Hermann Hope 
 #indo hace referencia a indo-europeans
 
-set.seed(3141)
+
 m_neo5 = LDA(dtm_neo,
             method = "Gibbs",
             k = 5,
             control = list(alpha = 0.5))
+
 terms(m_neo5, 8)
 
 
-set.seed(3141)
+
 m_neo3 = LDA(dtm_neo,
              method = "Gibbs",
              k = 3,
              control = list(alpha = 0.5))
+
 terms(m_neo3, 8)
 
-set.seed(3141)
+
 m_neo4 = LDA(dtm_neo,
              method = "Gibbs",
              k = 4,
              control = list(alpha = 0.5))
+
 terms(m_neo4, 8)
 
+# Se utiliza la versión con stemming.
+# Se usa k = 5
 
-#Despues de repetidas corridas me parece que es mejor usar la version con stemming
-#ADEMAS k ENTRE 5 Y 8. Para simplificar sera 5
 
+# Gráficos ----------------------------------------------------------------
+
+## R Base ----
 
 topic = 1
+
 words_kb = posterior(m_neo4)$terms[topic, ] #distribucion posterior de terminos para topic definido antes
+
 topwords_kb = head(sort(words_kb, decreasing = T), n = 50) #ordenar palabras por relevancia
+
+# Probabilidad de cada palabra este asociada a topico 2:
+
 head(topwords_kb)
-#probabilidad de cada palabra este asociada a topico 2
 
 #ojo con letras sueltas, contracciones posiblemente habria que volver a procesamiento inicial
 
-#Hacer grafico con las 5 palabras ams comunes en los 5 topicos de m_neo5
+#Hacer grafico con las 5 palabras más comunes en los 5 topicos de m_neo5
 
 #Metodo R base
+
 par(mfrow=c(2,2)) #configurar grafico 3 filas 2 columnas
+
 for (i in 1:4) {
   topic = i
   words_kb = posterior(m_neo4)$terms[topic, ] #distribucion posterior de terminos para topic definido antes
@@ -149,21 +161,26 @@ for (i in 1:4) {
     top4_kb,
     las = 2,
     col = "lightblue",
-    main = paste("Top 10 palabras del tópico", i, " en A Critique of Democracy: A Guide for NeoReactionaries"),
+    #title = "Top 10 palabras por tópico en A Critique of Democracy:\nA guide for NeoReactionaries",
+    main = paste("Tópico", i),
     ylab = "Importancia"
   )
 }
 
-#Importancai indicaon relativa dentro del topico no frecuencia absoluta
+#Importancia posición relativa dentro del topico, no frecuencia absoluta
 
+## tidyverse ----
 
 #Metodo ggplot
 
-library(ggplot2)
-#Me gustaria que los 4 graficos aparezcan en un solo grafico
+library(ggplot2) #Me gustaria que los 4 graficos aparezcan en un solo grafico
 
 set.seed(3141)
+
+### Preparación BBDD ----
+
 datos<-list()
+
 for (i in 1:4){
   words_kb = posterior(m_neo4)$terms[i, ] #distribucion posterior de terminos para topic definido antes
   top4_kb = head(sort(words_kb, decreasing=T), n=6)
@@ -177,35 +194,30 @@ for (i in 1:4){
 
 datos_grafico <- bind_rows(datos)
 
-#y ahora grafico
-ggplot(datos_grafico, aes(x = Importance, y = reorder(Word, Importance), fill = Topic)) +
-  
- #Crear barra horizonta
+### ggplot -----
+
+ggplot(datos_grafico, 
+       aes(x = Importance, y = reorder(Word, Importance), fill = Topic)) +
   geom_col() +
-  
-  # Separar graficso por topico
   # The 'scales = "free_y"' ensures that the word labels for each topic are shown cleanly
   facet_wrap(~ Topic, scales = "free_y") +
-  
-  # Agregar tituclos
+  scale_fill_manual(values = c("#f94144","#43aa8b","#f8961e","#577590")) +
+  # Agregar títulos
   labs(
-    title = "Top 6 palabras más importantes por Tema en A Critique of Democracy",
+    title = "Top 6 palabras más importantes por tópico\nA Critique of Democracy",
     y = "Palabra",
     x = "Importancia"
   ) +
-  
-  # Tema minimalista
   theme_minimal() +
-  
-  # Optional: Customize the title of each small plot (strip)
   theme(
     strip.text = element_text(face = "bold", size = 10),
-    plot.title = element_text(hjust = 0.5)
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none" # Eliminamos la leyenda, porque no es necesaria
   )
 
 
-# ANALISIS PREVIOS-NO CONSIDERAR ------------------------------------------
 
+# Análisis previos --------------------------------------------------------
 
 corp <- corpus_reshape(data_corpus_inaugural, to = "paragraphs")
 #data_corpus_inaugural que viene con paquete
@@ -308,7 +320,5 @@ barplot(
   ylab = "Importancia"
 )
 
-
-#### ES RECOMENDABLE QUE SE EXPLORE OTRA CANTIDAD K DE TOPICOS
 
 
