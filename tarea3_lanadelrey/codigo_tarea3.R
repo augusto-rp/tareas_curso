@@ -8,6 +8,9 @@ library(quanteda)
 library(igraph)
 library(ggraph)
 library(LDAvis)
+library(ggplot2)
+
+library(udpipe) #herramienta para anotacion de datos
 
 
 # Base de datos -----------------------------------------------------------
@@ -15,17 +18,28 @@ library(LDAvis)
 
 #genero metadatos 
 metadatos<-tribble(
-  ~folder, ~nombre_album, ~ano,
-  "tarea3_lanadelrey/borntodie","1-B2D", 2012,
-  "tarea3_lanadelrey/paradise", "2-Paradise", 2012,
-  "tarea3_lanadelrey/ultraviolence", "3-UV", 2014,
-  "tarea3_lanadelrey/honeymoon", "4-HM", 2015,
-  "tarea3_lanadelrey/lustforlife", "5-L4L", 2017,
-  "tarea3_lanadelrey/normanfrockwell", "6-NFR", 2019,
-  "tarea3_lanadelrey/chemtrailsovertheclub", "7-COCC", 2021,
-  "tarea3_lanadelrey/bluebannisters", "8-BB", 2021,
-  "tarea3_lanadelrey/didyouknowthereisatunnel", "9-DYK", 2023
-  
+  ~folder, ~nombre_album, ~ano, ~artista, ~discon,
+  "tarea3_lanadelrey/borntodie","1-B2D", 2012, "lana del rey",1,
+  "tarea3_lanadelrey/paradise", "2-Paradise", 2012,"lana del rey",2,
+  "tarea3_lanadelrey/ultraviolence", "3-UV", 2014,"lana del rey",3,
+  "tarea3_lanadelrey/honeymoon", "4-HM", 2015,"lana del rey",4,
+  "tarea3_lanadelrey/lustforlife", "5-L4L", 2017,"lana del rey",5,
+  "tarea3_lanadelrey/normanfrockwell", "6-NFR", 2019,"lana del rey",6,
+  "tarea3_lanadelrey/chemstrailovertheclub", "7-COCC", 2021,"lana del rey",7,
+  "tarea3_lanadelrey/bluebannisters", "8-BB", 2021,"lana del rey",8,
+  "tarea3_lanadelrey/didyouknowthereisatunnel", "9-DYK", 2023,"lana del rey",9,
+  "tarea3_lanadelrey/thekickinside", "1-TKI", 1978, "kate bush",1,
+  "tarea3_lanadelrey/lionheart", "2-LH", 1978, "kate bush",2,
+  "tarea3_lanadelrey/neverforever","3-N4E", 1980, "kate bush",3,
+  "tarea3_lanadelrey/thedreaming", "4-TD", 1982, "kate bush",4,
+  "tarea3_lanadelrey/houndsoflove", "5-HoL", 1985, "kate bush",5,
+  "tarea3_lanadelrey/thesensualworld", "6-TSW", 1989, "kate bush",6,
+  "tarea3_lanadelrey/lungs", "1-L", 2009, "florence and the machine",1,
+  "tarea3_lanadelrey/ceremonials", "2-C", 2011, "florence and the machine",2,
+  "tarea3_lanadelrey/howbig","3-HBHBHB", 2015, "florence and the machine",3,
+  "tarea3_lanadelrey/highashope", "4-HaH", 2018, "florence and the machine",4,
+  "tarea3_lanadelrey/dancefever", "5-DF", 2022, "florence and the machine",5,
+  "tarea3_lanadelrey/everybodyscream", "6-ES", 2025, "florence and the machine",6
 )
 
 #leer letras, esto tuve que pedirselo a deepseek
@@ -35,6 +49,8 @@ for(i in 1:nrow(metadatos)) {
   album_folder <- metadatos$folder[i]
   album_name <- metadatos$nombre_album[i]
   album_year <- metadatos$ano[i]
+  artist_name<-metadatos$artista[i]
+  album_number<-metadatos$discon[i]
   
   cat("Processing:", album_name, "\n")
   
@@ -50,17 +66,19 @@ for(i in 1:nrow(metadatos)) {
       album = album_name,
       year = album_year,
       track_title = track_name,
-      text = lyrics_text
+      text = lyrics_text,
+      artist=artist_name,
+      albumN=album_number
     )
   }
 }
 
 # Crear data frame
-datos <- bind_rows(lyrics_list) %>%
-  group_by(album) %>%
-  mutate(track_number = row_number()) %>%
-  ungroup() %>%
-  select(album, year, track_number, track_title, text)
+datos <- bind_rows(lyrics_list) |>
+  group_by(album) |>
+  mutate(track_number = row_number()) |>
+  ungroup() |>
+  select(artist,album,albumN, year, track_number, track_title, text)
 
 
 # Procesamiento de texto --------------------------------------------------
@@ -70,34 +88,34 @@ datos <- bind_rows(lyrics_list) %>%
 datos <- datos %>%
   mutate(
     text_clean = str_to_lower(text),
-    text_clean = str_replace_all(text_clean, "[^a-zA-Z0-9\\s]", ""),
+   text_clean = str_replace_all(text_clean, "[^a-zA-Z0-9\\s]", ""),
     text_clean = str_squish(text_clean)
   )
 
 
 #para eliminar stop words primero tokenizamos
 
-token<-datos|>
-  unnest_tokens(word, text_clean)|>
-  anti_join(stop_words)
+# token<-datos|>
+ # unnest_tokens(word, text_clean)|>
+#  anti_join(stop_words)
 
 
 #y agregar una columna
-datos <- token |>
-  group_by(album, year, track_number, track_title, text) |>
-  summarise(text_non = paste(word, collapse = " "), .groups = "drop") |>
-  left_join(select(datos, album, track_title, text_clean), 
-            by = c("album", "track_title"))
+#datos <- token |>
+ # group_by(album, year, track_number, track_title, text) |>
+  #summarise(text_non = paste(word, collapse = " "), .groups = "drop") |>
+  #left_join(select(datos, album, track_title, text_clean), 
+#            by = c("album", "track_title"))
 
-datos <- datos %>%
-  select(album, year, track_number, track_title, text, text_clean, text_non)
+#datos <- datos %>%
+#  select(album, year, track_number, track_title, text, text_clean, text_non)
 
 #Ahora tengo un objeto con tres versiones de cada letra
 #text que es texto original
 #text_clean que es texto procesaso y con stop words
 #text_non que es procesado y sin stop words
 
-rm(list=c("lyrics_list","token","metadatos"))
+# rm(list=c("lyrics_list","token","metadatos"))
 
 
 # Análisis ----------------------------------------------------------------
@@ -124,24 +142,25 @@ out <- prepDocuments(
   documents = procesado$documents,
   vocab = procesado$vocab,
   meta = procesado$meta,
-  lower.thresh = 2  #solo palabras que aparezcan en al menos dos documentos
+  lower.thresh = 3  #solo palabras que aparezcan en al menos tres documentos, lo probe con dos y aparecian algunas palabras aun muy especificas
 ) 
-#si hago esto con la version clean se reduce demasiado
+
 
 
 cat("Original vocabulary size:", length(procesado$vocab), "\n")
 cat("Vocabulary after filtering:", length(out$vocab), "\n") #se redujo muchisimo las palabras, que shushsa
 cat("Number of documents:", length(out$documents), "\n")
 
-rm(procesado)
+rm(list=c("procesado", "lyrics_list"))
 
 
 ################Modelo de muchos topicos, para ver cual balancea mejor exclusividad y coherencia
-
+#3,4,5,6,7,8,9,
 n_modelos <- data.frame(
-  K = c(3, 5, 6, 7, 8, 10, 12),
+  K = c(3,4,5,6,7,8,9), #hice otra prueba antes con 10, 12, 15 y 20 y no funcionaban tam bien en coherencia
   exclusivity = NA,
-  semantic_coherence = NA
+  semantic_coherence = NA,
+  converged=NA
 )
 
 for(i in 1:nrow(n_modelos)) {
@@ -156,20 +175,25 @@ for(i in 1:nrow(n_modelos)) {
   )
   n_modelos$exclusivity[i] <- mean(exclusivity(model))
   n_modelos$semantic_coherence[i] <- mean(semanticCoherence(model, out$documents))
+  n_modelos$converged[i] <- model$convergence$converged  # PARA VER CONVERGENCIA
 }
+
+
+print(n_modelos)
+
 
 #todos los modelos covergen, pero cual es mejor?
 
 # Cual es mejor?
-library(ggplot2)
+
 ggplot(n_modelos, aes(x = semantic_coherence, y = exclusivity, label = K)) +
   geom_point() +
   geom_text(hjust = 1, vjust = 1) +
   labs(title = "Calidad de modelo por numero de topicos")
 
-##esto sugiere el de 5 o el de 3 veamos cada uno por seprado para ver cual hace mas sentido
+##esto sugiere el de 4 o 5
 
-
+rm(list=c("metadatos", "model"))
 
 
 #######modelo de 5
@@ -202,8 +226,8 @@ plot(stm_model5,
      type = "labels", 
      topics = 1:5,
      labeltype = "frex",  # encuentro que este indicar es el mas interpretable
-     n = 7,                # Number of words to show per topic
-     main = "Topics with Highest Score Words")
+     n = 7,                # Cuantas palabras mostrar
+     main = "Topicos: palabras mas frec y exclusivas")
 
 #esto hace un poco mas interpretable los temas
 
@@ -225,6 +249,24 @@ plot(prep, covariate = "album", topics = 4, model = stm_model5, main = "Topic 4 
 plot(prep, covariate = "album", topics = 5, model = stm_model5, main = "Topic 5 by Album")
 
 
+
+#veamos como cambian estos temas, primeroe stimamos efectos de artista
+prep <- estimateEffect(
+  1:5 ~ artist ,
+  stm_model5,
+  meta = out$meta,
+  uncertainty = "Global"
+)
+
+
+par(mfrow = c(2, 3))
+plot(prep, covariate = "artist", topics = 1, model = stm_model5, main = "Topic 1 by artist")
+plot(prep, covariate = "artist", topics = 2, model = stm_model5, main = "Topic 2 by artist")
+plot(prep, covariate = "artist", topics = 3, model = stm_model5, main = "Topic 3 by artist")
+plot(prep, covariate = "artist", topics = 4, model = stm_model5, main = "Topic 4 by artist")
+plot(prep, covariate = "artist", topics = 5, model = stm_model5, main = "Topic 5 by artist")
+
+
 #Cual es la cancion mas representativa para cada topico?
 
 findThoughts(
@@ -244,24 +286,26 @@ toLDAvis(stm_model5, out$documents, R = 10)
 
 
 
-#######modelo de 3
+############CON 4 TOPICOS
+
+#######modelo de 4
 
 set.seed(3141)
-stm_model3 <- stm(
+stm_model4 <- stm(
   documents = out$documents,
   vocab = out$vocab,
-  K = 3,                    # Numero de topicos
+  K = 4,                    # Numero de topicos
   prevalence = ~ album ,  # Topicos varian por album
   max.em.its = 100,          # Maximas iteraciones para lograr convergencia
   data = out$meta,
   init.type = "Spectral"
 )
 
-#modelo converge con 5 TEMAS
+#modelo converge con 4 TEMAS
 
 #EXPLOREMOS
-etiquetas3 <- labelTopics(stm_model3, n = 7)
-print(etiquetas3)
+etiquetas4 <- labelTopics(stm_model4, n = 7)
+print(etiquetas4)
 
 
 #frex es frecuencia y exclusividad, palabras que son mas exclusivas de este topico
@@ -271,40 +315,190 @@ print(etiquetas3)
 
 #score usa una combinacionde da cuenta de FREFUENCIA Y DISTINVIDIDAD
 
-plot(stm_model3, 
+plot(stm_model4, 
      type = "labels", 
-     topics = 1:3,
-     labeltype = "frex",  # encuentro que este indicar es el mas interpretable
-     n = 7,                # Number of words to show per topic
-     main = "Topics with Highest Score Words")
+     topics = 1:4,
+     labeltype = "score",  # encuentro que este indicar es el mas interpretable
+     n = 7,                # Cuantas palabras mostrar
+     main = "Topicos: Palabras Distintivas")
 
 #esto hace un poco mas interpretable los temas
 
 
 #veamos como cambian estos temas, primeroe stimamos efectos de album
-prep3 <- estimateEffect(
-  1:3 ~ album ,
-  stm_model3,
+prep_album <- estimateEffect(
+  1:4 ~ album ,
+  stm_model4,
   meta = out$meta,
   uncertainty = "Global"
 )
 
 
 par(mfrow = c(2, 2))
-plot(prep3, covariate = "album", topics = 1, model = stm_model3, main = "Topic 1 by Album")
-plot(prep3, covariate = "album", topics = 2, model = stm_model3, main = "Topic 2 by Album")
-plot(prep3, covariate = "album", topics = 3, model = stm_model3, main = "Topic 3 by Album")
+plot(prep_album , covariate = "album", topics = 1, model = stm_model4, main = "Topic 1 by Album")
+plot(prep_album , covariate = "album", topics = 2, model = stm_model4, main = "Topic 2 by Album")
+plot(prep_album , covariate = "album", topics = 3, model = stm_model4, main = "Topic 3 by Album")
+plot(prep_album , covariate = "album", topics = 4, model = stm_model4, main = "Topic 4 by Album")
 
+
+
+
+
+#veamos como cambian estos temas, primeroe stimamos efectos de artista
+prep_artist <- estimateEffect(
+  1:4 ~ artist ,
+  stm_model4,
+  meta = out$meta,
+  uncertainty = "Global"
+)
+
+
+par(mfrow = c(2, 2))
+plot(prep_artist, covariate = "artist", topics = 1, model = stm_model4, main = "Interpelación a otros")
+plot(prep_artist, covariate = "artist", topics = 2, model = stm_model4, main = "Paz Conflictiva")
+plot(prep_artist, covariate = "artist", topics = 3, model = stm_model4, main = "Cuerpo Convulso")
+plot(prep_artist, covariate = "artist", topics = 4, model = stm_model4, main = "Tristeza Punzante")
+
+
+  
+  
 
 #Cual es la cancion mas representativa para cada topico?
 
 findThoughts(
-  stm_model3,
+  stm_model4,
   texts = out$meta$track_title,  
-  topics = 1:3,
+  topics = 1:4,
   n = 3,
   meta = out$meta
 )
+
+#Topico 1: Interpelacion a un otro              Muuuuy exclusivo de Lana
+#Topico 2: Paz conflictiva              Muuuuy exclusivo de Lana
+#Topico 3: Cuerpo convulso             Compartido Kate y Florence
+#Topico 4: Tristeza punzante             Compartido Lana y Kate
+
+
+topic_corr<-topicCorr(stm_model4)
+plot(topic_corr)
+
+
+# Stylometric Analysis ----------------------------------------------------
+
+#como es la voz de lana del rey?
+
+
+
+udpipe_download_model(language = "english-ewt") #descarga modelo
+
+pipe <- udpipe_load_model(file = "english-ewt-ud-2.5-191206.udpipe") #descarga archivo a carpeta
+anotacion <- udpipe_annotate(pipe, x = datos$text_clean)#idealmente contar con harta memoria para ahcer esto
+anotacion_df <- as.data.frame(anotacion)
+
+
+
+# proporcion adjetivo a verbos
+metricas <- anotacion_df |>
+  group_by(doc_id) |>
+  summarise(
+    total_words = n(),
+    adjectives = sum(upos == "ADJ"),
+    verbs = sum(upos == "VERB"),
+    aux_verbs = sum(upos == "AUX"),
+    nouns = sum(upos == "NOUN"),
+    pronouns = sum(upos == "PRON"),
+    adverbs = sum(upos == "ADV"),
+    
+    # certeza vs pensamiento hipotetico
+    modal_verbs = sum(lemma %in% c("would", "could", "should", "might", "must", "can", "will", "may")),
+    
+    # proporcion de focus en objeto o procesos
+    adj_verb_ratio = adjectives / (verbs + aux_verbs),
+    modal_ratio = modal_verbs / (verbs + aux_verbs),
+    noun_ratio = nouns / total_words,
+    pronoun_ratio = pronouns / total_words,
+    
+    # complejidad oracion
+    avg_sentence_length = n() / n_distinct(sentence_id),
+    
+    .groups = "drop"
+  )
+
+
+
+
+# pasar a base de datos
+datos_metricas <- datos |>
+  mutate(doc_id = row_number()) |>
+  left_join(
+    metricas |> 
+      mutate(doc_id = as.integer(str_extract(doc_id, "\\d+"))),
+    by = "doc_id"
+  )
+
+#eliminar avg_sentence_length que no tengo separado datos en lineas
+datos_metricas <- datos_metricas |>
+  select(-avg_sentence_length)
+
+#y ahora tengo una base de datos con los analisis de letras!!!
+
+
+
+
+#veamos metricas por arista y album
+
+album_metricas <- datos_metricas |>
+  group_by(album, artist) |>
+  summarise(
+    mean_adj_verb_ratio = mean(adj_verb_ratio),
+    mean_modal_ratio = mean(modal_ratio)
+  )
+
+
+#Mean Adjective-to-Verb Ratio es el balance entre el uso de adjetivos (descripcion) y verbos
+#entre mas alto el valor (cercano a uno) mas descriptivo, y entre mas bajo mas centrado en accion
+
+
+#Mean Modal Verb Ratio  es modalidad verbal (us de hipoteticos o certeza)
+#entre ams alto mas especilativo, y entre mas bajo mas concreto
+
+
+
+#hay una correlacion entre mean_adj_ver_ratio y mean_modal_ratio?
+ggplot(album_metricas, aes(x = mean_adj_verb_ratio, y = mean_modal_ratio, color = artist)) +
+  geom_point(size = 3) +
+  geom_text(aes(label = album), vjust = -1, hjust = 0.5) +
+  labs(
+    title = "Relaciones estilometricas",
+    x = "Proporcion adjetivo-verbo",
+    y = "Rango de modalidad promedio"
+  ) +
+  theme_minimal()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rm(list=c("album_bigrams","b2d","bigram_graph","lyrics_list", "metadatos","prep","topic_corr","bigrams_separated"))
+
 
 
 
@@ -312,7 +506,6 @@ findThoughts(
 
 # Stylometric Analysis ----------------------------------------------------
 
-#como es la voz de lana del rey?
 
 
 
