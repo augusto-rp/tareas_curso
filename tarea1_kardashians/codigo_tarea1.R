@@ -1,20 +1,25 @@
 #Vamos a analizar las emociones presentes en el capitulo final de la primera temporada de The Kardashians
 #Para ello necesitamos abrir el siguiente paquete
- library(text2emotion) #esta libreria implica usar python desde R.
- library(readr) #para leer txt
-texto<-read_file("tarea1_kardashians/1_10.txt")
+
+library(text2emotion) #esta libreria implica usar python desde R.
+library(readr) #para leer txt
+
+texto <- read_file("tarea1_kardashians/1_10.txt")
 
 #Sin embargo, el texto esta lleno de simbolos que hay que eliminar. Por lo 
 #vamos a usar ademas una funcion inserta en text2emotion que va a expandir cotnradcciones, y estandarizar puntuacion
-#texto<-preprocess_text(texto)
-#texto
 
+texto<-preprocess_text(texto)
+
+texto
 
 
 #Al comparar el primer archivo con el segundo.Pasa algo raro "be able to expand\r\nour family one day" pasa a "be able to e tongue sticking out and our family one day"
 #No tengo idea que paso   "e tongue sticking out". Talvez aso paso cin \r and \n
 #Entonces voy a volver a crear texto sin ningun cambio y primero sacarle esos signos -->Volver a linea 5 y luego aplicar 16
+
 texto<-gsub("\r","" , texto)
+
 texto
 
 #Al volver a aplicar linea 9 vuelve a haber ese mismo problema. Posiblemente algun proceso de la funcion esta traduciendo algo en un emoji. Por lo tanto no se usara esa funcion
@@ -27,6 +32,7 @@ texto <- unlist(strsplit(texto, "\n"))
 texto
 
 #eliminar espacios vacios
+
 texto <- gsub("^\\s+|\\s+$", "", texto)
 texto <- texto[nchar(texto) > 0]
 
@@ -36,8 +42,9 @@ texto <- texto[nchar(texto) > 0]
 
 #Primera opcion-->Separar lineas por habalantes
 #Crear una tabla con dos columnas hablante y texto
+
 library(dplyr)
-#library(stringr)
+library(stringr)
 
 #texto_linea<-read_file("tarea1_kardashians/1_10.txt") 
 #texto_linea<-gsub("\r\n","" , texto_linea)
@@ -45,11 +52,13 @@ library(dplyr)
 
 #texto_separado <- strsplit(texto_linea, "(?<=[.!?\\-])(?=[A-Z]{2,}:)|(?<=[^A-Z!?.\\-])(?=[A-Z]{2,}:)", perl = TRUE)[[1]]
 #texto_separado #separar por hablantes. pero parece que la transcripcion no es suficientemente consistente para permitir esto
-rm(patron)
+#rm(patron)
 #Quiero eliminar todos los "" en texto
+
 texto <- texto[texto != ""]
 
 #Lexicons emocionales  nuevo metodo para analisis de emociones
+
 library(tidytext)
 library(textdata)
 
@@ -93,53 +102,109 @@ texto_nrc|>
   count(sentiment, sort=TRUE)
 
 
-
-library(dplyr)
+# Las 3 palabras más comunes por cada emoción -----------------------------
 
 #Ahora quiero hacer una tabla descriptiva con las 3 palabras mas comunes por cada emocion usando texto_nrc
+
 top_palabras_nrc <- texto_nrc %>%
   group_by(sentiment, word) %>%
   summarise(frecuencia = n()) %>%
   arrange(sentiment, desc(frecuencia)) %>%
   slice_head(n = 3)
+
 top_palabras_nrc
 
-library(ggplot2)
 #Finalmente quiero graficar los resultados de top_palabras_nrc
 ggplot(top_palabras_nrc, aes(x = reorder(word, -frecuencia), y = frecuencia, fill = sentiment)) +
   geom_bar(stat = "identity") +
-  facet_wrap(~ sentiment, scales = "free_y") +
-  labs(title = "Top 3 palabras más comunes por emoción",
+  facet_grid(cols = vars(sentiment), scales = "free_x") +
+  scale_fill_manual(values = c("#f94144","#f3722c","#f8961e","#f9844a","#f9c74f",
+                               "#90be6d","#43aa8b","#4d908e","#577590","#277da1")) +
+  #facet_wrap(~ sentiment, scales = "free_y") +
+  labs(title = "Top 3 palabras más comunes por emoción...",
+       subtitle = "...del último capítulo de la primera temporada de The Kardashians.",
        x = "Palabras",
        y = "Frecuencia") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-##no me gusta esta tabla, 
+  theme_linedraw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
+
+#no me gusta esta tabla, 
 #se me ocurrio idea de ver palabras que aparezcan en multiples categorias mas de 10 veces
+
+
+# Palabras que aparezcan en múltiples categorías más de 10 veces ----------
+
+texto_nrc |> 
+  count(sentiment)
+
+texto_nrc |> 
+  filter(sentiment %in% c("positive", "negative")) |> 
+  count(sentiment, word) |> 
+  filter(n > 5)
+
 palabras_multiples <- texto_nrc %>%
-  group_by(word, sentiment) %>%
-  summarise(frecuencia = n()) %>%
-  ungroup() %>%
-  group_by(word) %>%
-  filter(n() > 1 & frecuencia > 10) %>%
-  arrange(word, desc(frecuencia))
+  filter(sentiment %in% c("positive", "negative")) |> 
+  group_by(sentiment, word) %>%
+  summarise(frecuencia = n())
+
 palabras_multiples
 
-#Crear un grafico de barras donde aparezcan las 4 palabras mas usadas para expresar sentimientos negativos y las 4 mas comunes para expresar sentimientos positivos usando  top_palabras_bin
-top_palabras_bin_filtered <- top_palabras_bin |>
-  filter(sentiment %in% c("positive", "negative")) |>
-  group_by(sentiment) |>
+# Crear un grafico de barras donde aparezcan las 4 palabras mas usadas para expresar sentimientos negativos y las 4 mas comunes para expresar sentimientos positivos usando: top_palabras_bin
+
+top_palabras_bin_filtered <- palabras_multiples |>
+  group_by(sentiment) |> 
+  arrange(-frecuencia) |> 
   slice_head(n = 4) |>
   ungroup()
+
 #ahora crear el grafico
-ggplot(top_palabras_bin_filtered, aes(x = reorder(word, -frecuencia), y = frecuencia, fill = sentiment)) +
-  geom_bar(stat = "identity") +Grafi
+
+ggplot(top_palabras_bin_filtered,
+       aes(
+         x = reorder(word, -frecuencia),
+         y = frecuencia,
+         fill = sentiment
+       )) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("#577590","#f94144"),
+                    labels = c("Negativo", "Positivo")) +
   labs(title = "Top 4 palabras más comunes para sentimientos positivos y negativos",
-       x = "Palabras",
+       subtitle = "...del último capítulo de la primera temporada de The Kardashians.",
+       x = "Palabras", 
        y = "Frecuencia") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "top",
+        legend.title = element_blank())
 
 
-#Cuidado todos estos resultados son engañosos. Pues la mayoria de god son en contextos de "oh my god" lo que hacen los programas es 
-#decir todas las amociones posibles asociadas a ello. Es decir, emociones a las que se asocia  "god", esto no es lo mismo a decir que uso se les da
+#Cuidado todos estos resultados son engañosos. Pues la mayoria de god son en contextos de "oh my god" lo que hacen los programas es decir todas las amociones posibles asociadas a ello. Es decir, emociones a las que se asocia  "god", esto no es lo mismo a decir que uso se les da
+
+# Sin god
+
+top_palabras_bin_filtered_sin_god <- palabras_multiples |>
+  filter(word != "god") |> 
+  group_by(sentiment) |> 
+  arrange(-frecuencia) |> 
+  slice_head(n = 5) |>
+  ungroup()
+
+ggplot(top_palabras_bin_filtered_sin_god,
+       aes(
+         x = reorder(word, -frecuencia),
+         y = frecuencia,
+         fill = sentiment
+       )) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("#577590","#f94144"),
+                    labels = c("Negativo", "Positivo")) +
+  labs(title = "Top 5 palabras más comunes para sentimientos positivos y negativos...",
+       subtitle = "...del último capítulo de la primera temporada de The Kardashians.",
+       x = "Palabras", 
+       y = "Frecuencia",
+       caption = "Nota del autor: filtramos la palabra god de la base de datos.") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "top",
+        legend.title = element_blank())

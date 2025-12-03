@@ -12,6 +12,10 @@ library(ggplot2)
 
 library(udpipe) #herramienta para anotacion de datos
 
+
+# Base de datos -----------------------------------------------------------
+
+
 #genero metadatos 
 metadatos<-tribble(
   ~folder, ~nombre_album, ~ano, ~artista, ~discon,
@@ -77,8 +81,9 @@ datos <- bind_rows(lyrics_list) |>
   select(artist,album,albumN, year, track_number, track_title, text)
 
 
-#vamos a procesar el texto, EN TEORIA todo esto me lo puedo saltar pq stm tiene su propia forma de hacer esto sin agregar columnas
-#SIN EMBARGO LO INTENTE CON ESE METODO Y ME PARECIO QUE RECORTABA MUCHO Y ESO AFECTABA RESULTADOS
+# Procesamiento de texto --------------------------------------------------
+
+#vamos a procesar el texto
 
 datos <- datos %>%
   mutate(
@@ -95,8 +100,6 @@ datos <- datos %>%
 #  anti_join(stop_words)
 
 
-
-
 #y agregar una columna
 #datos <- token |>
  # group_by(album, year, track_number, track_title, text) |>
@@ -107,7 +110,6 @@ datos <- datos %>%
 #datos <- datos %>%
 #  select(album, year, track_number, track_title, text, text_clean, text_non)
 
-
 #Ahora tengo un objeto con tres versiones de cada letra
 #text que es texto original
 #text_clean que es texto procesaso y con stop words
@@ -116,7 +118,10 @@ datos <- datos %>%
 # rm(list=c("lyrics_list","token","metadatos"))
 
 
-# Structural Topic Modelling ----------------------------------------------
+# Análisis ----------------------------------------------------------------
+
+
+## Structural Topic Modelling ----------------------------------------------
 
 #un upgrade respecto a LDA que fue lo que se hizo en tarea anterios
 
@@ -275,7 +280,7 @@ findThoughts(
 #como se relacionan topicos
 
 
-frex_words <- labelTopics(stm_model5, n = 10, labeltype = "frex")
+frex_words <- labelTopics(stm_model5, n = 10)
 
 toLDAvis(stm_model5, out$documents, R = 10) 
 
@@ -301,6 +306,7 @@ stm_model4 <- stm(
 #EXPLOREMOS
 etiquetas4 <- labelTopics(stm_model4, n = 7)
 print(etiquetas4)
+
 
 #frex es frecuencia y exclusividad, palabras que son mas exclusivas de este topico
 #implica un 50% de frecuencai y 50% de exclusividad
@@ -498,9 +504,7 @@ rm(list=c("album_bigrams","b2d","bigram_graph","lyrics_list", "metadatos","prep"
 
 
 
-
-
-
+# Stylometric Analysis ----------------------------------------------------
 
 
 
@@ -535,3 +539,4 @@ ggraph(bigram_graph, layout = "fr") +
   geom_node_point(color = "lightblue", size = 5) +
   geom_node_text(aes(label = name), vjust = 1, hjust = 1) +
   theme_void()
+
