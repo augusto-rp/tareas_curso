@@ -197,7 +197,7 @@ Y obtengo el siguiente gráfico de resultado
 
 Debemos preguntarnos que k indica la mayor coherencia y exclusividad temática. **EL MODELO DE 4 TÓPICOS PARECE EL MÁS APROPIADO**
 
-K<4 tiene mayor exclusividad (es decir cada tópico tiene un lenguaje que es mas distintos de los otros), pero se pierde coherencia
+K>4 tiene mayor exclusividad (es decir cada tópico tiene un lenguaje que es mas distintos de los otros), pero se pierde coherencia
 
 
 Continuemos los análisis entonces con un modelo de 4 tópicos
